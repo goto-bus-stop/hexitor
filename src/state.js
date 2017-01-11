@@ -29,12 +29,12 @@ function currentFile (state = {
   }
 }
 
-
-function cursor(state = {
-  position: 0
-}, action) {
+function cursor(state = { position: 0 }, action) {
   switch (action.type) {
     case exports.MOVE_CURSOR:
+      if (typeof action.payload === 'function') {
+        return { position: action.payload(state.position) }
+      }
       return { position: action.payload }
     default:
       return state

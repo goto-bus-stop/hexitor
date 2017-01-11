@@ -10,6 +10,7 @@
     "inferno": "^1.1.2",
     "inferno-hyperscript": "^1.1.2",
     "inferno-redux": "^1.1.2",
+    "mousetrap": "^1.6.0",
     "redux": "^3.6.0"
   },
   "devDependencies": {
