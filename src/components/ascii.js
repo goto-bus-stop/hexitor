@@ -28,6 +28,9 @@ function formatByte (byte, isCtrl = isControlCharacter(byte)) {
   if (byte === 0x0A /* '\n' */) {
     return '⏎'
   }
+  if (byte === 0x20 /* ' ' */) {
+    return '\u00A0'
+  }
   return isCtrl ? '?' : String.fromCharCode(byte)
 }
 
