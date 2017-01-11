@@ -9,8 +9,7 @@ const styles = {
     width: '100%'
   }),
   cell: css({
-    display: 'inline-block',
-    marginRight: 5
+    display: 'inline-block'
   })
 }
 
@@ -18,17 +17,20 @@ const enhance = connect(
   state => state.currentFile
 )
 
-module.exports = enhance(Hex)
+module.exports = enhance(Ascii)
 
 function formatByte (byte) {
-  return byte.toString(16).padStart(2, '0')
+  if (byte === '\n'.charCodeAt()) {
+    return '\\n'
+  }
+  return String.fromCharCode(byte)
 }
 
 function Cell ({ byte }) {
-  return h(`span.${styles.cell}`, formatByte(byte))
+  return h(`.${styles.cell}`, formatByte(byte))
 }
 
-function Hex ({ buffer }) {
+function Ascii ({ buffer }) {
   if (buffer) {
     const cells = []
     for (let i = 0; i < buffer.byteLength; i += 1) {
