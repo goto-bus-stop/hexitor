@@ -9,7 +9,7 @@ function onChange (event, dispatch) {
   input.toArrayBuffer((err, buffer) => {
     dispatch({
       type: state.LOAD_FILE_FINISH,
-      payload: buffer
+      payload: Buffer.from(buffer)
     })
   })
 }

@@ -3,6 +3,10 @@ const css = require('glamor').css
 const Header = require('./header')
 const Hex = require('./hex')
 
+css.global('*, *::after, *::before', {
+  boxSizing: 'border-box'
+})
+
 css.global('body', {
   background: '#333',
   margin: 0,
