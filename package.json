@@ -2,9 +2,12 @@
   "name": "hexitor",
   "version": "0.0.0",
   "scripts": {
-    "start": "budo src/index.js:bundle.js"
+    "dev": "budo src/index.js:bundle.js",
+    "build": "browserify -t babelify src/index.js | uglifyjs -cmo bundle.js",
+    "start": "ecstatic ."
   },
   "dependencies": {
+    "ecstatic": "^2.1.0",
     "file-component": "^0.1.0",
     "glamor": "^2.20.20",
     "inferno": "^1.1.2",
@@ -15,6 +18,11 @@
     "redux": "^3.6.0"
   },
   "devDependencies": {
-    "budo": "^9.4.1"
+    "babel-plugin-envify": "^1.2.1",
+    "babel-preset-latest": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.3.0",
+    "budo": "^9.4.1",
+    "uglify-js": "^2.7.5"
   }
 }
