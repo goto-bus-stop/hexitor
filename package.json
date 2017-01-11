@@ -1,0 +1,14 @@
+{
+  "name": "hexitor",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "budo src/index.js:bundle.js"
+  },
+  "dependencies": {
+    "inferno": "^1.1.2",
+    "inferno-hyperscript": "^1.1.2"
+  },
+  "devDependencies": {
+    "budo": "^9.4.1"
+  }
+}
