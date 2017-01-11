@@ -5,6 +5,7 @@
     "start": "budo src/index.js:bundle.js"
   },
   "dependencies": {
+    "glamor": "^2.20.20",
     "inferno": "^1.1.2",
     "inferno-hyperscript": "^1.1.2"
   },

@@ -1,11 +1,6 @@
 const Inferno = require('inferno')
 const h = require('inferno-hyperscript')
-
-function App () {
-  return h('div', [
-    h('h1', 'Hello World!')
-  ])
-}
+const App = require('./components/app')
 
 Inferno.render(
   h(App, {
