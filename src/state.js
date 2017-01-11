@@ -1,11 +1,13 @@
 const { combineReducers } = require('redux')
 
 module.exports = exports = combineReducers({
-  currentFile
+  currentFile,
+  cursor
 })
 
 exports.LOAD_FILE_START = 'hexitor/file/LOAD_FILE_START'
 exports.LOAD_FILE_FINISH = 'hexitor/file/LOAD_FILE_FINISH'
+exports.MOVE_CURSOR = 'hexitor/cursor/MOVE_CURSOR'
 
 function currentFile (state = {
   loading: false,
@@ -27,3 +29,14 @@ function currentFile (state = {
   }
 }
 
+
+function cursor(state = {
+  position: 0
+}, action) {
+  switch (action.type) {
+    case exports.MOVE_CURSOR:
+      return { position: action.payload }
+    default:
+      return state
+  }
+}

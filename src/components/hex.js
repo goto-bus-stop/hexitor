@@ -1,40 +1,27 @@
 const h = require('inferno-hyperscript')
-const { connect } = require('inferno-redux')
 const css = require('glamor').css
+const DataView = require('./dataView')
 
 const styles = {
-  field: css({
-    font: '12pt monospace',
-    color: 'white',
-    width: '100%'
-  }),
   cell: css({
     display: 'inline-block',
     marginRight: 5
+  }),
+  selected: css({
+    background: 'yellow',
+    color: 'black'
   })
 }
 
-const enhance = connect(
-  state => state.currentFile
-)
-
-module.exports = enhance(Hex)
+module.exports = DataView.make(Cell)
 
 function formatByte (byte) {
   return byte.toString(16).padStart(2, '0')
 }
 
-function Cell ({ byte }) {
-  return h(`span.${styles.cell}`, formatByte(byte))
-}
-
-function Hex ({ buffer }) {
-  if (buffer) {
-    const cells = []
-    for (let i = 0; i < buffer.byteLength; i += 1) {
-      cells.push(h(Cell, { byte: buffer[i] }))
-    }
-    return h(`.${styles.field}`, cells)
-  }
-  return h('div')
+function Cell ({ byte, selected, onSelect }) {
+  return h('span', {
+    onClick: onSelect,
+    className: css(styles.cell, selected && styles.selected)
+  }, formatByte(byte))
 }

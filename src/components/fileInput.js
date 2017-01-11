@@ -15,7 +15,7 @@ function onChange (event, dispatch) {
 }
 
 const enhance = connect(
-  state => state.currentFile,
+  state => ({ loading: state.currentFile.loading }),
   dispatch => ({ onChange: (event) => onChange(event, dispatch) })
 )
 
