@@ -1,7 +1,22 @@
+const HexBuffer = require('../buffer')
+
 module.exports = exports = currentFile
 
 exports.LOAD_FILE_START = 'hexitor/file/LOAD_FILE_START'
 exports.LOAD_FILE_FINISH = 'hexitor/file/LOAD_FILE_FINISH'
+
+exports.loadFileStart = function loadFileStart (file) {
+  return {
+    type: exports.LOAD_FILE_START
+  }
+}
+
+exports.loadFileFinish = function loadFileFinish (buffer) {
+  return {
+    type: exports.LOAD_FILE_FINISH,
+    payload: HexBuffer.from(buffer, 256)
+  }
+}
 
 const initialState = {
   loading: false,

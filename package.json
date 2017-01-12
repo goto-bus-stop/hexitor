@@ -7,6 +7,7 @@
     "start": "ecstatic ."
   },
   "dependencies": {
+    "buffers": "^0.1.1",
     "ecstatic": "^2.1.0",
     "file-component": "^0.1.0",
     "glamor": "^2.20.20",

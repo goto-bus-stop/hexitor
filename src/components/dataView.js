@@ -54,17 +54,57 @@ module.exports.make = (renderCell) => {
   return (props) => h(module.exports, Object.assign({ cellComponent: PureCell }, props))
 }
 
-function DataView ({ cellComponent, buffer, cursor, setCursor }) {
-  if (buffer) {
-    const cells = []
-    for (let i = 0; i < buffer.byteLength; i += 1) {
+function chunkStateIsEqual (a, b) {
+  return a.chunk === b.chunk &&
+    a.cursor === b.cursor &&
+    a.onSelect === b.onSelect
+}
+
+class ChunkView extends Component {
+  shouldComponentUpdate (nextProps) {
+    return !chunkStateIsEqual(this.props, nextProps)
+  }
+
+  render () {
+    const {
+      cellComponent,
+      chunk,
+      chunkOffset,
+      cursor,
+      setCursor
+    } = this.props
+
+    const cells = Array(chunk.byteLength)
+    for (let i = 0; i < chunk.byteLength; i += 1) {
       cells.push(h(cellComponent, {
-        byte: buffer[i],
-        onSelect: linkEvent(i, setCursor),
+        byte: chunk[i],
+        onSelect: linkEvent(chunkOffset + i, setCursor),
         selected: i === cursor
       }))
     }
-    return h(`.${styles.field}`, cells)
+
+    return h('span', cells)
+  }
+}
+
+function DataView ({ cellComponent, buffer, cursor, setCursor }) {
+  if (buffer) {
+    let chunkOffset = 0
+
+    const chunks = buffer.chunks().map((chunk) => {
+      const chunkEnd = chunkOffset + chunk.byteLength
+      const el = h(ChunkView, {
+        cellComponent,
+        chunk,
+        chunkOffset,
+        setCursor,
+        cursor: cursor >= chunkOffset && cursor < chunkEnd ? cursor - chunkOffset : null
+      })
+      chunkOffset = chunkEnd
+      return el
+    })
+
+    return h(`.${styles.field}`, chunks)
   }
   return h('div')
 }
