@@ -77,6 +77,9 @@ class DataView extends Component {
       this.container
     )
 
+    if (this.props.onCellSize) {
+      this.props.onCellSize(cellSize)
+    }
     this.setState({ cellSize })
   }
 

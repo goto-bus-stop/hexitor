@@ -4,7 +4,7 @@ const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const Hex = require('./hex')
 const Ascii = require('./ascii')
-const { setVisibleArea } = require('../state')
+const { setVisibleArea, reportCellSize } = require('../state')
 
 const styles = {
   split: css({
@@ -13,18 +13,31 @@ const styles = {
     width: '100%',
     overflowY: 'auto'
   }),
-  // TODO Base these widths on the reported cell sizes instead of hardcoding.
-  hex: css({
-    width: 350 * 2.413290113452188
-  }),
-  ascii: css({
-    width: 350
-  })
+  hex: css({ }),
+  ascii: css({ })
 }
 
 const enhance = connect(
-  state => ({}),
-  { setVisibleArea }
+  (state) => {
+    const { width } = state.view.visible
+    const { hex, ascii } = state.view.cellSizes
+
+    if (!hex || !ascii) {
+      return { hexWidth: 'auto', asciiWidth: 'auto' }
+    }
+
+    const proportionTotal = hex.width + ascii.width
+
+    const hexWidth = (hex.width / proportionTotal) * width
+    const asciiWidth = (ascii.width / proportionTotal) * width
+
+    return { hexWidth, asciiWidth }
+  },
+  {
+    setVisibleArea,
+    reportHexCellSize: reportCellSize.bind(null, 'hex'),
+    reportAsciiCellSize: reportCellSize.bind(null, 'ascii')
+  }
 )
 
 module.exports = enhance(MainViews)
@@ -44,12 +57,20 @@ function onScroll (setVisibleArea, event) {
 
 const Wrapper = (props) => h(`.${styles.split}`, props)
 
-function MainViews ({ setVisibleArea }) {
+function MainViews ({
+  hexWidth,
+  asciiWidth,
+  setVisibleArea,
+  reportHexCellSize,
+  reportAsciiCellSize
+}) {
   return h(Wrapper, {
     onComponentDidMount: onUpdate.bind(null, setVisibleArea),
     onScroll: linkEvent(setVisibleArea, onScroll)
   }, [
-    h(`.${styles.hex}`, [ h(Hex) ]),
-    h(`.${styles.ascii}`, [ h(Ascii) ])
+    h(`.${styles.hex}`, { style: { width: hexWidth } },
+      [ h(Hex, { onCellSize: reportHexCellSize }) ]),
+    h(`.${styles.ascii}`, { style: { width: asciiWidth } },
+      [ h(Ascii, { onCellSize: reportAsciiCellSize }) ])
   ])
 }
