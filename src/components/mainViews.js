@@ -69,8 +69,8 @@ function MainViews ({
     onScroll: linkEvent(setVisibleArea, onScroll)
   }, [
     h(`.${styles.hex}`, { style: { width: hexWidth } },
-      [ h(Hex, { onCellSize: reportHexCellSize }) ]),
+      [ h(Hex, { width: hexWidth, onCellSize: reportHexCellSize }) ]),
     h(`.${styles.ascii}`, { style: { width: asciiWidth } },
-      [ h(Ascii, { onCellSize: reportAsciiCellSize }) ])
+      [ h(Ascii, { width: asciiWidth, onCellSize: reportAsciiCellSize }) ])
   ])
 }

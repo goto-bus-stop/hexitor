@@ -66,7 +66,7 @@ class DataView extends Component {
   }
 
   getWidth () {
-    return this.container.clientWidth
+    return this.props.width || this.container.clientWidth
   }
 
   componentDidMount () {
