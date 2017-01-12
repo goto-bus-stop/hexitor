@@ -3,6 +3,7 @@
     "latest"
   ],
   "plugins": [
-    "envify"
+    "envify",
+    "transform-runtime"
   ]
 }
