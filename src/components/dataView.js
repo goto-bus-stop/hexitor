@@ -44,21 +44,16 @@ class DataView extends Component {
     return Math.floor(this.getWidth() / cellSize.width)
   }
 
+  getLinesCount () {
+    const bytesPerLine = this.getBytesPerLine()
+    return Math.ceil(this.props.buffer.length / bytesPerLine)
+  }
+
   getLinesFromTop () {
     const { top } = this.props.visible
     const { cellSize } = this.state
 
     return Math.floor(top / cellSize.height)
-  }
-
-  getLinesFromBottom () {
-    const { top, height } = this.props.visible
-    const { cellSize } = this.state
-
-    const bytesPerLine = this.getBytesPerLine()
-    const totalLines = Math.ceil(this.props.buffer.length / bytesPerLine)
-    const linesAtBottom = Math.ceil((top + height) / cellSize.height)
-    return totalLines - linesAtBottom
   }
 
   getLinesVisible () {
@@ -114,11 +109,11 @@ class DataView extends Component {
       }
 
       const topPadding = linesFromTop * cellSize.height
-      const bottomPadding = this.getLinesFromBottom() * cellSize.height
+      const totalHeight = this.getLinesCount() * cellSize.height
       return h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer }, [
-        h('div', { style: { height: topPadding } }),
-        chunks,
-        h('div', { style: { height: bottomPadding } })
+        h('div', { style: { height: totalHeight } }, [
+          h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
+        ])
       ])
     }
     return h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer })
