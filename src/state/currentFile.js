@@ -14,7 +14,7 @@ exports.loadFileStart = function loadFileStart (file) {
 exports.loadFileFinish = function loadFileFinish (buffer) {
   return {
     type: exports.LOAD_FILE_FINISH,
-    payload: HexBuffer.from(buffer, 256)
+    payload: HexBuffer.from(buffer)
   }
 }
 

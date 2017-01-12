@@ -1,18 +1,24 @@
-const Buffers = require('buffers')
+function createView (base, start, end) {
+  const view = base.subarray(start, end)
+  view.base = base
+  view.start = start
+  view.end = end
+  view.equals = (other) =>
+    other.base === base && other.start === start && other.end === end
 
-class HexBuffer extends Buffers {
-  chunks () {
-    return this.buffers
+  return view
+}
+
+class HexBuffer extends Buffer {
+  view (start, end) {
+    return createView(this, start, end)
   }
 }
 
 module.exports = HexBuffer
 
-HexBuffer.from = function (arrayBuffer, size) {
-  const buf = new HexBuffer()
-  for (let i = 0; i < arrayBuffer.byteLength; i += size) {
-    const chunk = Buffer.from(arrayBuffer.slice(i, i + size))
-    buf.push(chunk)
-  }
-  return buf
+HexBuffer.from = (arrayBuffer) => {
+  const base = Buffer.from(arrayBuffer)
+  base.__proto__ = HexBuffer.prototype
+  return base
 }

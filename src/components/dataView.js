@@ -96,20 +96,20 @@ class DataView extends Component {
 
       const chunks = []
       for (let i = 0; i < linesVisible; i++) {
-        const chunkStart = (linesFromTop + i) * bytesPerLine
-        const chunkEnd = chunkStart + bytesPerLine
+        const lineStart = (linesFromTop + i) * bytesPerLine
+        const lineEnd = lineStart + bytesPerLine
 
-        if (chunkStart > buffer.length) {
+        if (lineStart > buffer.length) {
           break
         }
 
-        chunks.push(h(ChunkView, {
-          key: chunkStart,
+        chunks.push(h(LineView, {
+          key: lineStart,
           cellComponent,
-          chunk: buffer.slice(chunkStart, chunkEnd),
-          chunkOffset: chunkStart,
+          chunk: buffer.view(lineStart, lineEnd),
+          chunkOffset: lineStart,
           setCursor,
-          cursor: cursor >= chunkStart && cursor < chunkEnd ? cursor - chunkStart : null
+          cursor: cursor >= lineStart && cursor < lineEnd ? cursor - lineStart : null
         }))
       }
 
@@ -153,15 +153,15 @@ module.exports.make = (renderCell) => {
   return (props) => h(module.exports, Object.assign({ cellComponent: PureCell }, props))
 }
 
-function chunkStateIsEqual (a, b) {
-  return a.chunk === b.chunk &&
+function lineStateIsEqual (a, b) {
+  return a.chunk.equals(b.chunk) &&
     a.cursor === b.cursor &&
     a.onSelect === b.onSelect
 }
 
-class ChunkView extends Component {
+class LineView extends Component {
   shouldComponentUpdate (nextProps) {
-    return !chunkStateIsEqual(this.props, nextProps)
+    return !lineStateIsEqual(this.props, nextProps)
   }
 
   render () {
