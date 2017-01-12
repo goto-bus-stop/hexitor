@@ -1,4 +1,6 @@
 const h = require('inferno-hyperscript')
+const { linkEvent } = require('inferno')
+const Component = require('inferno-component')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const { MOVE_CURSOR } = require('../state')
@@ -26,8 +28,31 @@ const enhance = connect(
 
 module.exports = enhance(DataView)
 
-module.exports.make = (cellComponent) => (props) =>
-  h(module.exports, Object.assign({ cellComponent }, props))
+function cellStateIsEqual (a, b) {
+  return a.selected === b.selected &&
+    a.byte === b.byte &&
+    // Compare linkEvent() result
+    a.onSelect.data === b.onSelect.data &&
+    a.onSelect.event === b.onSelect.event
+}
+
+/**
+ * Create a DataView component that uses the given cell renderer.
+ */
+module.exports.make = (renderCell) => {
+  // Add shouldComponentUpdate to cells.
+  class PureCell extends Component {
+    shouldComponentUpdate (nextProps) {
+      return !cellStateIsEqual(this.props, nextProps)
+    }
+
+    render () {
+      return renderCell(this.props)
+    }
+  }
+
+  return (props) => h(module.exports, Object.assign({ cellComponent: PureCell }, props))
+}
 
 function DataView ({ cellComponent, buffer, cursor, setCursor }) {
   if (buffer) {
@@ -35,7 +60,7 @@ function DataView ({ cellComponent, buffer, cursor, setCursor }) {
     for (let i = 0; i < buffer.byteLength; i += 1) {
       cells.push(h(cellComponent, {
         byte: buffer[i],
-        onSelect: () => setCursor(i),
+        onSelect: linkEvent(i, setCursor),
         selected: i === cursor
       }))
     }
