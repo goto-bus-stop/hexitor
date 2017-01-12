@@ -24,7 +24,7 @@ const styles = {
 
 module.exports = DataView.make(Cell)
 
-function formatByte (byte, isCtrl = isControlCharacter(byte)) {
+function formatByte (byte, isCtrl) {
   if (byte === 0x0A /* '\n' */) {
     return '⏎'
   }
@@ -35,7 +35,7 @@ function formatByte (byte, isCtrl = isControlCharacter(byte)) {
 }
 
 function Cell ({ byte, selected, onSelect }) {
-  const isCtrl = isControlCharacter(byte)
+  const isCtrl = isControlCharacter(byte) || byte > 0x7F
   return h('span', {
     onClick: onSelect,
     className: css(
