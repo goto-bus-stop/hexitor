@@ -19,6 +19,6 @@ module.exports = HexBuffer
 
 HexBuffer.from = (arrayBuffer) => {
   const base = Buffer.from(arrayBuffer)
-  base.__proto__ = HexBuffer.prototype
+  Object.setPrototypeOf(base, HexBuffer.prototype)
   return base
 }

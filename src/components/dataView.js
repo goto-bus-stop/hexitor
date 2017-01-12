@@ -33,8 +33,9 @@ class DataView extends Component {
       cellSize: { width: Infinity, height: Infinity }
     }
 
-    this.refContainer = (container) =>
+    this.refContainer = (container) => {
       this.container = container
+    }
   }
 
   getBytesPerLine () {
@@ -64,7 +65,6 @@ class DataView extends Component {
     const { height } = this.props.visible
     const { cellSize } = this.state
 
-    const bytesPerLine = this.getBytesPerLine()
     return Math.ceil(height / cellSize.height)
   }
 
@@ -118,7 +118,7 @@ class DataView extends Component {
       return h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer }, [
         h('div', { style: { height: topPadding } }),
         chunks,
-        h('div', { style: { height: bottomPadding } }),
+        h('div', { style: { height: bottomPadding } })
       ])
     }
     return h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer })

@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "budo src/index.js:bundle.js",
     "build": "browserify -t babelify src/index.js | uglifyjs -cmo bundle.js",
-    "start": "ecstatic ."
+    "start": "ecstatic .",
+    "lint": "standard src/**/*.js"
   },
   "dependencies": {
     "ecstatic": "^2.1.0",
@@ -24,6 +25,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.3.0",
     "budo": "^9.4.1",
+    "standard": "^8.6.0",
     "uglify-js": "^2.7.5"
   }
 }

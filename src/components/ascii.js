@@ -1,5 +1,4 @@
 const h = require('inferno-hyperscript')
-const { connect } = require('inferno-redux')
 const css = require('glamor').css
 const isControlCharacter = require('is-ascii-control-char-code')
 const DataView = require('./dataView')

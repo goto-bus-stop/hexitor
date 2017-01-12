@@ -7,6 +7,10 @@ function onChange (event, dispatch) {
   dispatch(loadFileStart())
   const input = file(event.target.files[0])
   input.toArrayBuffer((err, buffer) => {
+    if (err) {
+      console.error(err.message)
+      return
+    }
     dispatch(loadFileFinish(buffer))
   })
 }
