@@ -12,7 +12,8 @@ const styles = {
     color: 'white'
   }),
   field: css({
-    width: '100%'
+    width: '100%',
+    background: '#1b1b1b'
   })
 }
 
