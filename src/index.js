@@ -11,3 +11,5 @@ Inferno.render(
   h(Provider, { store }, h(App)),
   document.querySelector('#app')
 )
+
+window.store = store

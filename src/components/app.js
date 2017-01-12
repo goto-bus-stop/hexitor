@@ -1,8 +1,7 @@
 const h = require('inferno-hyperscript')
 const css = require('glamor').css
 const Header = require('./header')
-const Hex = require('./hex')
-const Ascii = require('./ascii')
+const Main = require('./mainViews')
 const { Hotkeys } = require('./hotkey')
 const { moveCursor } = require('../state')
 
@@ -18,29 +17,18 @@ css.global('body', {
 })
 
 const styles = {
-  split: css({
-    display: 'flex',
+  main: css({
     position: 'absolute',
     top: 50,
     bottom: 0,
-    width: '100%',
-    overflowY: 'auto'
-  }),
-  hex: css({
-    flexGrow: 2
-  }),
-  ascii: css({
-    flexGrow: 1
+    width: '100%'
   })
 }
 
 module.exports = function App () {
   return h('div', [
     h(Header),
-    h(`.${styles.split}`, [
-      h(`.${styles.hex}`, [ h(Hex) ]),
-      h(`.${styles.ascii}`, [ h(Ascii) ])
-    ]),
+    h(`.${styles.main}`, [ h(Main) ]),
     h(Hotkeys, {
       left: () => moveCursor((pos) => pos - 1),
       right: () => moveCursor((pos) => pos + 1)
