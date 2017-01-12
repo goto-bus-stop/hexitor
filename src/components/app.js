@@ -19,7 +19,12 @@ css.global('body', {
 
 const styles = {
   split: css({
-    display: 'flex'
+    display: 'flex',
+    position: 'absolute',
+    top: 50,
+    bottom: 0,
+    width: '100%',
+    overflowY: 'auto'
   }),
   hex: css({
     flexGrow: 2
