@@ -4,7 +4,7 @@ const Header = require('./header')
 const Hex = require('./hex')
 const Ascii = require('./ascii')
 const { Hotkeys } = require('./hotkey')
-const { MOVE_CURSOR } = require('../state')
+const { moveCursor } = require('../state')
 
 css.global('*, *::after, *::before', {
   boxSizing: 'border-box'
@@ -42,8 +42,8 @@ module.exports = function App () {
       h(`.${styles.ascii}`, [ h(Ascii) ])
     ]),
     h(Hotkeys, {
-      left: () => ({ type: MOVE_CURSOR, payload: (pos) => pos - 1 }),
-      right: () => ({ type: MOVE_CURSOR, payload: (pos) => pos + 1 })
+      left: () => moveCursor((pos) => pos - 1),
+      right: () => moveCursor((pos) => pos + 1)
     })
   ])
 }

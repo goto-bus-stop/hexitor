@@ -3,7 +3,7 @@ const { linkEvent } = require('inferno')
 const Component = require('inferno-component')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
-const { MOVE_CURSOR } = require('../state')
+const { moveCursor } = require('../state')
 
 const styles = {
   field: css({
@@ -18,12 +18,7 @@ const enhance = connect(
     buffer: state.currentFile.buffer,
     cursor: state.cursor.position
   }),
-  dispatch => ({
-    setCursor: (position) => dispatch({
-      type: MOVE_CURSOR,
-      payload: position
-    })
-  })
+  { setCursor: moveCursor }
 )
 
 module.exports = enhance(DataView)
