@@ -5,7 +5,7 @@ const DataView = require('./dataView')
 const styles = {
   cell: css({
     display: 'inline-block',
-    marginRight: 5
+    padding: '0 2px'
   }),
   selected: css({
     background: 'yellow',

@@ -10,7 +10,12 @@ exports.setVisibleArea = function setVisibleArea (top, left, height, width) {
 }
 
 const initialState = {
-  visible: null
+  visible: {
+    top: 0,
+    left: 0,
+    height: 0,
+    width: 0
+  }
 }
 
 function view (state = initialState, action) {

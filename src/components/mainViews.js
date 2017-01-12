@@ -13,11 +13,12 @@ const styles = {
     width: '100%',
     overflowY: 'auto'
   }),
+  // TODO Base these widths on the reported cell sizes instead of hardcoding.
   hex: css({
-    flexGrow: 2
+    width: 350 * 2.413290113452188
   }),
   ascii: css({
-    flexGrow: 1
+    width: 350
   })
 }
 
