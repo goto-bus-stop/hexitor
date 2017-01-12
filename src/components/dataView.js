@@ -5,6 +5,7 @@ const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const { moveCursor } = require('../state')
 const measure = require('../utils/measure')
+const pure = require('../utils/pure')
 
 const styles = {
   type: css({
@@ -88,39 +89,43 @@ class DataView extends Component {
     const { cellComponent, buffer, cursor, setCursor } = this.props
     const { cellSize } = this.state
 
-    if (buffer) {
-      const linesFromTop = this.getLinesFromTop()
-      const linesVisible = this.getLinesVisible()
-      const bytesPerLine = this.getBytesPerLine()
+    const makeEl = (children) =>
+      h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer }, children)
 
-      const chunks = []
-      for (let i = 0; i < linesVisible; i++) {
-        const lineStart = (linesFromTop + i) * bytesPerLine
-        const lineEnd = lineStart + bytesPerLine
+    if (!buffer) {
+      return makeEl()
+    }
 
-        if (lineStart > buffer.length) {
-          break
-        }
+    const linesFromTop = this.getLinesFromTop()
+    const linesVisible = this.getLinesVisible()
+    const bytesPerLine = this.getBytesPerLine()
 
-        chunks.push(h(LineView, {
-          key: lineStart,
-          cellComponent,
-          chunk: buffer.view(lineStart, lineEnd),
-          chunkOffset: lineStart,
-          setCursor,
-          cursor: cursor >= lineStart && cursor < lineEnd ? cursor - lineStart : null
-        }))
+    const chunks = []
+    for (let i = 0; i < linesVisible; i++) {
+      const lineStart = (linesFromTop + i) * bytesPerLine
+      const lineEnd = lineStart + bytesPerLine
+
+      if (lineStart > buffer.length) {
+        break
       }
 
-      const topPadding = linesFromTop * cellSize.height
-      const totalHeight = this.getLinesCount() * cellSize.height
-      return h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer }, [
-        h('div', { style: { height: totalHeight } }, [
-          h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
-        ])
-      ])
+      chunks.push(h(LineView, {
+        key: lineStart,
+        cellComponent,
+        chunk: buffer.view(lineStart, lineEnd),
+        chunkOffset: lineStart,
+        setCursor,
+        cursor: cursor >= lineStart && cursor < lineEnd ? cursor - lineStart : null
+      }))
     }
-    return h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer })
+
+    const topPadding = linesFromTop * cellSize.height
+    const totalHeight = this.getLinesCount() * cellSize.height
+    return makeEl([
+      h('div', { style: { height: totalHeight } }, [
+        h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
+      ])
+    ])
   }
 }
 
@@ -138,17 +143,7 @@ function cellStateIsEqual (a, b) {
  * Create a DataView component that uses the given cell renderer.
  */
 module.exports.make = (renderCell) => {
-  // Add shouldComponentUpdate to cells.
-  class PureCell extends Component {
-    shouldComponentUpdate (nextProps) {
-      return !cellStateIsEqual(this.props, nextProps)
-    }
-
-    render () {
-      return renderCell(this.props)
-    }
-  }
-
+  const PureCell = pure(cellStateIsEqual)(renderCell)
   return (props) => h(module.exports, Object.assign({ cellComponent: PureCell }, props))
 }
 
@@ -158,29 +153,21 @@ function lineStateIsEqual (a, b) {
     a.onSelect === b.onSelect
 }
 
-class LineView extends Component {
-  shouldComponentUpdate (nextProps) {
-    return !lineStateIsEqual(this.props, nextProps)
+const LineView = pure(lineStateIsEqual)(function LineView ({
+  cellComponent,
+  chunk,
+  chunkOffset,
+  cursor,
+  setCursor
+}) {
+  const cells = Array(chunk.byteLength)
+  for (let i = 0; i < chunk.byteLength; i += 1) {
+    cells.push(h(cellComponent, {
+      byte: chunk[i],
+      onSelect: linkEvent(chunkOffset + i, setCursor),
+      selected: i === cursor
+    }))
   }
 
-  render () {
-    const {
-      cellComponent,
-      chunk,
-      chunkOffset,
-      cursor,
-      setCursor
-    } = this.props
-
-    const cells = Array(chunk.byteLength)
-    for (let i = 0; i < chunk.byteLength; i += 1) {
-      cells.push(h(cellComponent, {
-        byte: chunk[i],
-        onSelect: linkEvent(chunkOffset + i, setCursor),
-        selected: i === cursor
-      }))
-    }
-
-    return h('span', cells)
-  }
-}
+  return h('span', cells)
+})
