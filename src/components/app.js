@@ -2,6 +2,7 @@ const h = require('inferno-hyperscript')
 const css = require('glamor').css
 const Header = require('./header')
 const Main = require('./mainViews')
+const Interpretations = require('./interpretations')
 const { Hotkeys } = require('./hotkey')
 const { moveCursor } = require('../state')
 
@@ -20,6 +21,12 @@ const styles = {
   main: css({
     position: 'absolute',
     top: 50,
+    bottom: 150,
+    width: '100%'
+  }),
+  footer: css({
+    position: 'absolute',
+    height: 150,
     bottom: 0,
     width: '100%'
   })
@@ -29,6 +36,7 @@ module.exports = function App () {
   return h('div', [
     h(Header),
     h(`.${styles.main}`, [ h(Main) ]),
+    h(`.${styles.footer}`, [ h(Interpretations) ]),
     h(Hotkeys, {
       left: () => moveCursor((pos) => pos - 1),
       right: () => moveCursor((pos) => pos + 1)
