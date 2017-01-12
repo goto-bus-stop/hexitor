@@ -3,7 +3,7 @@
     "latest"
   ],
   "plugins": [
-    "envify",
+    "transform-inline-environment-variables",
     "transform-runtime"
   ]
 }

@@ -21,7 +21,7 @@
     "redux": "^3.6.0"
   },
   "devDependencies": {
-    "babel-plugin-envify": "^1.2.1",
+    "babel-plugin-transform-inline-environment-variables": "^6.8.0",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-latest": "^6.16.0",
     "babelify": "^7.3.0",
