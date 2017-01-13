@@ -16,7 +16,7 @@ const styles = {
 module.exports = DataView.make(Cell)
 
 function formatByte (byte) {
-  return byte.toString(16).padStart(2, '0')
+  return byte.toString(16).padStart(2, '0').toUpperCase()
 }
 
 function Cell ({ byte, selected, onSelect }) {
