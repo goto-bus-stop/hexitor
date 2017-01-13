@@ -19,9 +19,14 @@ function formatByte (byte) {
   return byte.toString(16).padStart(2, '0').toUpperCase()
 }
 
+const formatted = []
+for (let i = 0; i <= 0xFF; i++) {
+  formatted[i] = formatByte(i)
+}
+
 function Cell ({ byte, selected, onSelect }) {
   return h('span', {
     onClick: onSelect,
     className: css(styles.cell, selected && styles.selected)
-  }, formatByte(byte))
+  }, formatted[byte])
 }
