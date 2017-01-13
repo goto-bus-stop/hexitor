@@ -7,15 +7,17 @@ const { moveCursor } = require('../state')
 const measure = require('../utils/measure')
 const pure = require('../utils/pure')
 
+const type = {
+  font: '16px monospace',
+  color: 'white'
+}
+
 const styles = {
-  type: css({
-    font: '16px monospace',
-    color: 'white'
-  }),
+  type: css(type),
   field: css({
     width: '100%',
     background: '#1b1b1b'
-  })
+  }, type)
 }
 
 const enhance = connect(
@@ -90,7 +92,7 @@ class DataView extends Component {
     const { cellSize } = this.state
 
     const makeEl = (children) =>
-      h(`.${css(styles.type, styles.field)}`, { ref: this.refContainer }, children)
+      h(`.${styles.field}`, { ref: this.refContainer }, children)
 
     if (!buffer) {
       return makeEl()

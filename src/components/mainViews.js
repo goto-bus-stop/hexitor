@@ -8,10 +8,7 @@ const Ascii = require('./ascii')
 const { setVisibleArea, reportCellSize } = require('../state')
 
 const GUTTER_WIDTH = 100
-
-const withBorder = {
-  borderRight: '2px solid #000'
-}
+const BORDER_WIDTH = 2
 
 const styles = {
   split: css({
@@ -22,9 +19,10 @@ const styles = {
   }),
   gutter: css({
     width: GUTTER_WIDTH,
-    background: '#1b1b1b'
-  }, withBorder),
-  hex: css({ }, withBorder),
+    background: '#1b1b1b',
+    borderRight: '2px solid #000'
+  }),
+  hex: css({ }),
   ascii: css({ })
 }
 
