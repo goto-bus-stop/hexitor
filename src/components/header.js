@@ -6,12 +6,14 @@ const styles = {
   header: css({
     height: '50px',
     lineHeight: '50px',
-    background: '#e99',
+    background: '#53209d',
+    color: 'white',
     padding: '0 20px'
   }),
   title: css({
     margin: 0,
     marginRight: 50,
+    fontWeight: 'normal',
     float: 'left'
   })
 }
