@@ -2,9 +2,16 @@ const h = require('inferno-hyperscript')
 const { linkEvent } = require('inferno')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
+const Gutter = require('./gutter')
 const Hex = require('./hex')
 const Ascii = require('./ascii')
 const { setVisibleArea, reportCellSize } = require('../state')
+
+const GUTTER_WIDTH = 100
+
+const withBorder = {
+  borderRight: '2px solid #000'
+}
 
 const styles = {
   split: css({
@@ -13,13 +20,17 @@ const styles = {
     width: '100%',
     overflowY: 'auto'
   }),
-  hex: css({ }),
+  gutter: css({
+    width: GUTTER_WIDTH,
+    background: '#1b1b1b'
+  }, withBorder),
+  hex: css({ }, withBorder),
   ascii: css({ })
 }
 
 const enhance = connect(
   (state) => {
-    const { width } = state.view.visible
+    const width = state.view.visible.width - GUTTER_WIDTH
     const { hex, ascii } = state.view.cellSizes
 
     if (!hex || !ascii) {
@@ -68,6 +79,7 @@ function MainViews ({
     onComponentDidMount: onUpdate.bind(null, setVisibleArea),
     onScroll: linkEvent(setVisibleArea, onScroll)
   }, [
+    h(`.${styles.gutter}`, [ h(Gutter) ]),
     h(`.${styles.hex}`, { style: { width: hexWidth } },
       [ h(Hex, { width: hexWidth, onCellSize: reportHexCellSize }) ]),
     h(`.${styles.ascii}`, { style: { width: asciiWidth } },
