@@ -96,8 +96,8 @@ class DataView extends Component {
       return makeEl()
     }
 
-    const linesFromTop = this.getLinesFromTop()
-    const linesVisible = this.getLinesVisible()
+    const linesFromTop = Math.floor(this.getLinesFromTop() / 10) * 10
+    const linesVisible = Math.ceil(this.getLinesVisible() / 10 + 1) * 10
     const bytesPerLine = this.getBytesPerLine()
 
     const chunks = []
