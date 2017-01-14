@@ -4,6 +4,17 @@
   ],
   "plugins": [
     "transform-inline-environment-variables",
-    "transform-runtime"
-  ]
+    ["transform-runtime", {
+      "polyfill": false
+    }]
+  ],
+  "env": {
+    "production": {
+      "comments": false,
+      "minified": true,
+      "presets": [
+        "babili"
+      ]
+    }
+  }
 }

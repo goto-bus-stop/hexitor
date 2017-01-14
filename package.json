@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "budo src/index.js:bundle.js",
-    "build": "browserify -t babelify -p bundle-collapser/plugin src/index.js | uglifyjs -cmo bundle.js",
+    "build": "browserify -g babelify -p bundle-collapser/plugin src/index.js | uglifyjs -cmo bundle.js",
     "start": "ecstatic .",
     "lint": "standard src/**/*.js"
   },
@@ -23,6 +23,7 @@
   "devDependencies": {
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
     "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-babili": "0.0.9",
     "babel-preset-latest": "^6.16.0",
     "babelify": "^7.3.0",
     "browserify": "^13.3.0",
