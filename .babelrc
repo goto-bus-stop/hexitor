@@ -3,7 +3,6 @@
     "latest"
   ],
   "plugins": [
-    "transform-inline-environment-variables",
     "transform-runtime"
   ]
 }
