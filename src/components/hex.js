@@ -10,6 +10,9 @@ const styles = {
   selected: css({
     background: 'yellow',
     color: 'black'
+  }),
+  empty: css({
+    color: '#777'
   })
 }
 
@@ -27,6 +30,10 @@ for (let i = 0; i <= 0xFF; i++) {
 function Cell ({ byte, selected, onSelect }) {
   return h('span', {
     onClick: onSelect,
-    className: css(styles.cell, selected && styles.selected)
+    className: css(
+      styles.cell,
+      selected && styles.selected,
+      byte === 0 && styles.empty
+    )
   }, formatted[byte])
 }
