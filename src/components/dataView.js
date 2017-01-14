@@ -3,7 +3,12 @@ const { linkEvent } = require('inferno')
 const Component = require('inferno-component')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
-const { moveCursor } = require('../state')
+const {
+  moveCursor,
+  selectLineHeight,
+  selectTotalLines,
+  selectTotalHeight
+} = require('../state')
 const measure = require('../utils/measure')
 const pure = require('../utils/pure')
 
@@ -24,7 +29,12 @@ const enhance = connect(
   state => ({
     buffer: state.currentFile.buffer,
     cursor: state.cursor.position,
-    visible: state.view.visible
+    visible: state.view.visible,
+    lineHeight: selectLineHeight(state),
+    totalHeight: selectTotalHeight(state),
+    firstVisibleLine: state.view.firstVisibleLine,
+    visibleLines: state.view.visibleLines,
+    bytesPerLine: state.view.bytesPerLine
   }),
   { setCursor: moveCursor }
 )
@@ -40,35 +50,6 @@ class DataView extends Component {
     this.refContainer = (container) => {
       this.container = container
     }
-  }
-
-  getBytesPerLine () {
-    const { cellSize } = this.state
-
-    return Math.floor(this.getWidth() / cellSize.width)
-  }
-
-  getLinesCount () {
-    const bytesPerLine = this.getBytesPerLine()
-    return Math.ceil(this.props.buffer.length / bytesPerLine)
-  }
-
-  getLinesFromTop () {
-    const { top } = this.props.visible
-    const { cellSize } = this.state
-
-    return Math.floor(top / cellSize.height)
-  }
-
-  getLinesVisible () {
-    const { height } = this.props.visible
-    const { cellSize } = this.state
-
-    return Math.ceil(height / cellSize.height)
-  }
-
-  getWidth () {
-    return this.props.width || this.container.clientWidth
   }
 
   componentDidMount () {
@@ -98,9 +79,9 @@ class DataView extends Component {
       return makeEl()
     }
 
-    const linesFromTop = Math.floor(this.getLinesFromTop() / 10) * 10
-    const linesVisible = Math.ceil(this.getLinesVisible() / 10 + 1) * 10
-    const bytesPerLine = this.getBytesPerLine()
+    const linesFromTop = this.props.firstVisibleLine
+    const linesVisible = this.props.visibleLines
+    const bytesPerLine = this.props.bytesPerLine
 
     const chunks = []
     for (let i = 0; i < linesVisible; i++) {
@@ -121,14 +102,17 @@ class DataView extends Component {
       }))
     }
 
-    const topPadding = linesFromTop * cellSize.height
-    const totalHeight = this.getLinesCount() * cellSize.height
+    const topPadding = linesFromTop * this.props.lineHeight
     return makeEl([
-      h('div', { style: { height: totalHeight } }, [
+      h('div', { style: { height: this.props.totalHeight } }, [
         h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
       ])
     ])
   }
+}
+
+DataView.defaultProps = {
+  width: 1
 }
 
 module.exports = enhance(DataView)

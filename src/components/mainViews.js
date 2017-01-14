@@ -5,7 +5,13 @@ const { css } = require('glamor')
 const Gutter = require('./gutter')
 const Hex = require('./hex')
 const Ascii = require('./ascii')
-const { setVisibleArea, reportCellSize } = require('../state')
+const {
+  setVisibleArea,
+  reportCellSize,
+  selectLineHeight,
+  selectTotalLines,
+  selectTotalHeight
+} = require('../state')
 
 const GUTTER_WIDTH = 100
 const BORDER_WIDTH = 2
@@ -28,19 +34,16 @@ const styles = {
 
 const enhance = connect(
   (state) => {
-    const width = state.view.visible.width - GUTTER_WIDTH
-    const { hex, ascii } = state.view.cellSizes
-
-    if (!hex || !ascii) {
-      return { hexWidth: 'auto', asciiWidth: 'auto' }
+    return {
+      visible: state.view.visible,
+      lineHeight: selectLineHeight(state),
+      totalHeight: selectTotalHeight(state),
+      hexWidth: state.view.widths.hex,
+      asciiWidth: state.view.widths.ascii,
+      firstVisibleLine: state.view.firstVisibleLine,
+      visibleLines: state.view.visibleLines,
+      bytesPerLine: state.view.bytesPerLine
     }
-
-    const proportionTotal = hex.width + ascii.width
-
-    const hexWidth = (hex.width / proportionTotal) * width
-    const asciiWidth = (ascii.width / proportionTotal) * width
-
-    return { hexWidth, asciiWidth }
   },
   {
     setVisibleArea,
