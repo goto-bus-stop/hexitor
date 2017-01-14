@@ -1,7 +1,7 @@
 const h = require('inferno-hyperscript')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
-const { selectLineHeight, selectTotalHeight } = require('../state')
+const { selectLineHeight, selectTotalHeight, selectTotalLines } = require('../state')
 const pure = require('../utils/pure')
 
 const styles = {
@@ -24,6 +24,7 @@ const enhance = connect(
     cursor: state.cursor.position,
     lineHeight: selectLineHeight(state),
     totalHeight: selectTotalHeight(state),
+    totalLines: selectTotalLines(state),
     firstVisibleLine: state.view.firstVisibleLine,
     visibleLines: state.view.visibleLines,
     bytesPerLine: state.view.bytesPerLine
@@ -47,11 +48,13 @@ function Gutter ({
   totalHeight,
   firstVisibleLine,
   visibleLines,
+  totalLines,
   bytesPerLine
 }) {
   let firstByte = firstVisibleLine * bytesPerLine
   const markers = []
-  for (let i = 0; i < visibleLines; i++) {
+  const end = Math.min(firstVisibleLine + visibleLines, totalLines)
+  for (let i = firstVisibleLine; i < end; i++) {
     markers.push(h(Byte, {
       byte: firstByte,
       selected: cursor >= firstByte && cursor <= firstByte + bytesPerLine
