@@ -62,6 +62,7 @@ const AsInt8 = createValueComponent('Signed 8 bit', (b, i) => b.readInt8(i))
 const AsInt16LE = createValueComponent('Signed 16 bit', (b, i) => b.readInt16LE(i))
 const AsInt32LE = createValueComponent('Signed 32 bit', (b, i) => b.readInt32LE(i))
 const AsFloatLE = createValueComponent('Float 32 bit', (b, i) => b.readFloatLE(i))
+const AsDoubleLE = createValueComponent('Double 64 bit', (b, i) => b.readDoubleLE(i))
 const AsHexadecimal = createValueComponent('Hexadecimal 8 bit', (b, i) => b[i].toString(16).padStart(2, '0').toUpperCase())
 const AsOctal = createValueComponent('Octal 8 bit', (b, i) => b[i].toString(8).padStart(3, '0'))
 const AsBinary = createValueComponent('Binary 8 bit', (b, i) => b[i].toString(2).padStart(8, '0'))
@@ -80,7 +81,8 @@ function Interpretations ({ buffer, cursor }) {
     h('div', [
       h(AsInt32LE, { buffer, cursor }),
       h(AsUInt32LE, { buffer, cursor }),
-      h(AsFloatLE, { buffer, cursor })
+      h(AsFloatLE, { buffer, cursor }),
+      h(AsDoubleLE, { buffer, cursor })
     ]),
     h('div', [
       h(AsHexadecimal, { buffer, cursor }),
