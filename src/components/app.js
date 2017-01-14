@@ -39,7 +39,9 @@ module.exports = function App () {
     h(`.${styles.footer}`, [ h(Interpretations) ]),
     h(Hotkeys, {
       left: () => moveCursor((pos) => pos - 1),
-      right: () => moveCursor((pos) => pos + 1)
+      right: () => moveCursor((pos) => pos + 1),
+      up: (state) => moveCursor((pos) => pos - state.view.bytesPerLine),
+      down: (state) => moveCursor((pos) => pos + state.view.bytesPerLine)
     })
   ])
 }
