@@ -9,14 +9,19 @@ const styles = {
     width: '100%',
     background: '#1b1b1b',
     font: '16px monospace',
-    textAlign: 'right'
+    textAlign: 'right',
+    color: 'white'
   }),
-  padding: css({ color: '#777' }),
-  hex: css({ color: 'white' })
+  selected: css({
+    color: '#ff7'
+  }),
+  padding: css({ opacity: 0.5 }),
+  hex: css({})
 }
 
 const enhance = connect(
   (state) => ({
+    cursor: state.cursor.position,
     lineHeight: selectLineHeight(state),
     totalHeight: selectTotalHeight(state),
     firstVisibleLine: state.view.firstVisibleLine,
@@ -27,16 +32,17 @@ const enhance = connect(
 
 module.exports = enhance(pure()(Gutter))
 
-function Byte (byte) {
+function Byte ({ byte, selected }) {
   const hex = byte.toString(16).toUpperCase()
   const padding = '0'.repeat(8 - hex.length)
-  return h('span', [
+  return h('div', selected ? { className: styles.selected } : {}, [
     h(`span.${styles.padding}`, padding),
     h(`span.${styles.hex}`, hex)
   ])
 }
 
 function Gutter ({
+  cursor,
   lineHeight,
   totalHeight,
   firstVisibleLine,
@@ -46,7 +52,10 @@ function Gutter ({
   let firstByte = firstVisibleLine * bytesPerLine
   const markers = []
   for (let i = 0; i < visibleLines; i++) {
-    markers.push(h('div', Byte(firstByte)))
+    markers.push(h(Byte, {
+      byte: firstByte,
+      selected: cursor >= firstByte && cursor <= firstByte + bytesPerLine
+    }))
     firstByte += bytesPerLine
   }
 
