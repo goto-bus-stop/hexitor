@@ -72,11 +72,8 @@ class DataView extends Component {
     const { cellComponent, buffer, cursor, setCursor } = this.props
     const { cellSize } = this.state
 
-    const makeEl = (children) =>
-      h(`.${styles.field}`, { ref: this.refContainer }, children)
-
     if (!buffer) {
-      return makeEl()
+      return h(`.${styles.field}`, { ref: this.refContainer })
     }
 
     const linesFromTop = this.props.firstVisibleLine
@@ -103,7 +100,7 @@ class DataView extends Component {
     }
 
     const topPadding = linesFromTop * this.props.lineHeight
-    return makeEl([
+    return h(`.${styles.field}`, { ref: this.refContainer }, [
       h('div', { style: { height: this.props.totalHeight } }, [
         h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
       ])
