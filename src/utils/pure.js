@@ -8,6 +8,11 @@ function shallowEqual (a, b) {
   return ka.length === kb.length && ka.every((k) => a[k] === b[k])
 }
 
+/**
+ * Only rerender a component when its props have changed.
+ *
+ * ONLY works for functional components, not class components!
+ */
 function pure (equals = shallowEqual) {
   return (render) => class PureCell extends Component {
     shouldComponentUpdate (nextProps) {

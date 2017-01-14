@@ -1,6 +1,7 @@
 const h = require('inferno-hyperscript')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
+const pure = require('../utils/pure')
 
 const styles = {
   interpretations: css({
@@ -38,13 +39,13 @@ const enhance = connect(
   })
 )
 
-module.exports = enhance(Interpretations)
+module.exports = enhance(pure()(Interpretations))
 
 function onInputClick (event) {
   event.target.select()
 }
 
-const createValueComponent = (label, reader) => ({ buffer, cursor }) =>
+const createValueComponent = (label, reader) => pure()(({ buffer, cursor }) =>
   h(`div.${styles.valueComponent}`, [
     h(`label.${styles.valuePart}.${styles.label}`, label),
     h(`input.${styles.valuePart}.${styles.input}`, {
@@ -52,7 +53,7 @@ const createValueComponent = (label, reader) => ({ buffer, cursor }) =>
       readonly: true,
       onClick: onInputClick
     })
-  ])
+  ]))
 
 const AsUInt8 = createValueComponent('Unsigned 8 bit', (b, i) => b.readUInt8(i))
 const AsUInt16LE = createValueComponent('Unsigned 16 bit', (b, i) => b.readUInt16LE(i))

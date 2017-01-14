@@ -2,6 +2,7 @@ const h = require('inferno-hyperscript')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const { selectLineHeight, selectTotalHeight } = require('../state')
+const pure = require('../utils/pure')
 
 const styles = {
   gutter: css({
@@ -24,7 +25,7 @@ const enhance = connect(
   })
 )
 
-module.exports = enhance(Gutter)
+module.exports = enhance(pure()(Gutter))
 
 function Byte (byte) {
   const hex = byte.toString(16).toUpperCase()
