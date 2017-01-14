@@ -6,6 +6,7 @@ const { loadFileStart, loadFileFinish } = require('../state')
 function onChange (event, dispatch) {
   dispatch(loadFileStart())
   const input = file(event.target.files[0])
+  dispatch(loadFileStart(input.name))
   input.toArrayBuffer((err, buffer) => {
     if (err) {
       console.error(err.message)
