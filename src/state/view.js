@@ -57,7 +57,7 @@ function updateVisibleLines (state) {
   return extend({}, state, {
     widths,
     firstVisibleLine: Math.floor(visible.top / lineHeight / 10) * 10,
-    visibleLines: Math.ceil(visible.height / lineHeight / 10) * 10,
+    visibleLines: Math.ceil(visible.height / lineHeight / 10 + 1) * 10,
     bytesPerLine
   })
 }
