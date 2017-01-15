@@ -24,10 +24,10 @@ const styles = {
 module.exports = DataView.make(Cell)
 
 function formatByte (byte, isCtrl) {
-  if (byte === 0x0A /* '\n' */) {
+  if (byte === '\n'.charCodeAt(0)) {
     return '⏎'
   }
-  if (byte === 0x20 /* ' ' */) {
+  if (byte === ' '.charCodeAt(0)) {
     return '\u00A0'
   }
   return isCtrl ? '?' : String.fromCharCode(byte)
