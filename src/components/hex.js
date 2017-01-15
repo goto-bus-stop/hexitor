@@ -8,6 +8,10 @@ const styles = {
     padding: '0 5px'
   }),
   selected: css({
+    background: 'orange',
+    color: 'black'
+  }),
+  focused: css({
     background: 'yellow',
     color: 'black'
   }),
@@ -27,12 +31,13 @@ for (let i = 0; i <= 0xFF; i++) {
   formatted[i] = formatByte(i)
 }
 
-function Cell ({ byte, selected, onSelect }) {
+function Cell ({ byte, selected, focused, onSelect }) {
   return h('span', {
     onClick: onSelect,
     className: css(
       styles.cell,
       selected && styles.selected,
+      focused && styles.focused,
       byte === 0 && styles.empty
     )
   }, formatted[byte])

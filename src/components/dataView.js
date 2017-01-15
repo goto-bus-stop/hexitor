@@ -5,6 +5,10 @@ const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const {
   moveCursor,
+  beginSelection,
+  endSelection,
+  selectCursorPosition,
+  selectMainSelection,
   selectLineHeight,
   selectTotalLines,
   selectTotalHeight
@@ -28,7 +32,8 @@ const styles = {
 const enhance = connect(
   state => ({
     buffer: state.currentFile.buffer,
-    cursor: state.cursor.position,
+    cursor: selectCursorPosition(state),
+    selection: selectMainSelection(state),
     visible: state.view.visible,
     lineHeight: selectLineHeight(state),
     totalHeight: selectTotalHeight(state),
@@ -36,7 +41,11 @@ const enhance = connect(
     visibleLines: state.view.visibleLines,
     bytesPerLine: state.view.bytesPerLine
   }),
-  { setCursor: moveCursor }
+  {
+    setCursor: moveCursor,
+    onBeginSelection: beginSelection,
+    onEndSelection: endSelection
+  }
 )
 
 class DataView extends Component {
@@ -69,7 +78,15 @@ class DataView extends Component {
   }
 
   render () {
-    const { cellComponent, buffer, cursor, setCursor } = this.props
+    const {
+      cellComponent,
+      buffer,
+      cursor,
+      selection,
+      setCursor,
+      onBeginSelection,
+      onEndSelection
+    } = this.props
     const { cellSize } = this.state
 
     if (!buffer) {
@@ -95,7 +112,10 @@ class DataView extends Component {
         chunk: buffer.view(lineStart, lineEnd),
         chunkOffset: lineStart,
         setCursor,
-        cursor: cursor >= lineStart && cursor < lineEnd ? cursor - lineStart : null
+        onBeginSelection,
+        onEndSelection,
+        cursor: cursor >= lineStart && cursor < lineEnd ? cursor - lineStart : null,
+        selection: { start: selection.start - lineStart, end: selection.end - lineStart }
       }))
     }
 
@@ -116,6 +136,7 @@ module.exports = enhance(DataView)
 
 function cellStateIsEqual (a, b) {
   return a.selected === b.selected &&
+    a.focused === b.focused &&
     a.byte === b.byte &&
     // Compare linkEvent() result
     a.onSelect.data === b.onSelect.data &&
@@ -132,8 +153,20 @@ module.exports.make = (renderCell) => {
 
 function lineStateIsEqual (a, b) {
   return a.chunk.equals(b.chunk) &&
+    a.selection.start === b.selection.start &&
+    a.selection.end === b.selection.end &&
     a.cursor === b.cursor &&
     a.onSelect === b.onSelect
+}
+
+function onCellClick (props, event) {
+  props.setCursor(props.i)
+  if (event.shiftKey) {
+    event.preventDefault()
+    props.onEndSelection(props.i)
+  } else {
+    props.onBeginSelection(props.i)
+  }
 }
 
 const LineView = pure(lineStateIsEqual)(function LineView ({
@@ -141,14 +174,23 @@ const LineView = pure(lineStateIsEqual)(function LineView ({
   chunk,
   chunkOffset,
   cursor,
-  setCursor
+  selection,
+  setCursor,
+  onBeginSelection,
+  onEndSelection
 }) {
   const cells = Array(chunk.byteLength)
   for (let i = 0; i < chunk.byteLength; i += 1) {
     cells.push(h(cellComponent, {
       byte: chunk[i],
-      onSelect: linkEvent(chunkOffset + i, setCursor),
-      selected: i === cursor
+      onSelect: linkEvent({
+        setCursor,
+        onBeginSelection,
+        onEndSelection,
+        i: chunkOffset + i
+      }, onCellClick),
+      selected: i >= selection.start && i <= selection.end,
+      focused: i === cursor
     }))
   }
 

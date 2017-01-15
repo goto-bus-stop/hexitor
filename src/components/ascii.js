@@ -13,6 +13,10 @@ const styles = {
     display: 'inline-block'
   }),
   selected: css({
+    background: 'orange',
+    color: 'black'
+  }),
+  focused: css({
     background: 'yellow',
     color: 'black'
   }),
@@ -33,13 +37,14 @@ function formatByte (byte, isCtrl) {
   return isCtrl ? '?' : String.fromCharCode(byte)
 }
 
-function Cell ({ byte, selected, onSelect }) {
+function Cell ({ byte, selected, focused, onSelect }) {
   const isCtrl = isControlCharacter(byte) || byte > 0x7F
   return h('span', {
     onClick: onSelect,
     className: css(
       styles.cell,
       selected && styles.selected,
+      focused && styles.focused,
       isCtrl && styles.control
     )
   }, formatByte(byte, isCtrl))
