@@ -4,7 +4,10 @@ const file = require('file-component')
 const { loadFileStart, loadFileFinish } = require('../state')
 
 function onChange (event, dispatch) {
-  dispatch(loadFileStart())
+  if (event.target.files.length === 0) {
+    return
+  }
+
   const input = file(event.target.files[0])
   dispatch(loadFileStart(input.name))
   input.toArrayBuffer((err, buffer) => {
