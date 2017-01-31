@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { connect } = require('inferno-redux')
 const file = require('file-component')
 const { loadFileStart, loadFileFinish } = require('../state')
@@ -27,8 +27,8 @@ const enhance = connect(
 module.exports = enhance(FileInput)
 
 function FileInput ({ loading, onChange }) {
-  return h('div', [
-    loading && h('span', 'Loading ...'),
+  return h('div', {}, [
+    loading && h('span', {}, 'Loading ...'),
     h('input', {
       type: 'file',
       onChange: onChange

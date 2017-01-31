@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const css = require('glamor').css
 const Header = require('./header')
 const Main = require('./mainViews')
@@ -33,10 +33,14 @@ const styles = {
 }
 
 module.exports = function App () {
-  return h('div', [
+  return h('div', {}, [
     h(Header),
-    h(`.${styles.main}`, [ h(Main) ]),
-    h(`.${styles.footer}`, [ h(Interpretations) ]),
+    h('div', { className: styles.main },
+      h(Main)
+    ),
+    h('div', { className: styles.footer },
+      h(Interpretations)
+    ),
     h(Hotkeys, {
       left: () => moveCursor((pos) => pos - 1),
       right: () => moveCursor((pos) => pos + 1),

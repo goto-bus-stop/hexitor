@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const { selectLineHeight, selectTotalHeight, selectTotalLines } = require('../state')
@@ -37,8 +37,8 @@ function Byte ({ byte, selected }) {
   const hex = byte.toString(16).toUpperCase()
   const padding = '0'.repeat(8 - hex.length)
   return h('div', selected ? { className: styles.selected } : {}, [
-    h(`span.${styles.padding}`, padding),
-    h(`span.${styles.hex}`, hex)
+    h('span', { className: styles.padding }, padding),
+    h('span', { className: styles.hex }, hex)
   ])
 }
 
@@ -63,7 +63,7 @@ function Gutter ({
   }
 
   const topPadding = firstVisibleLine * lineHeight
-  return h(`.${styles.gutter}`, { style: { height: totalHeight } }, [
+  return h('div', { className: styles.gutter, style: { height: totalHeight } },
     h('div', { style: { transform: `translateY(${topPadding}px)` } }, markers)
-  ])
+  )
 }

@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { connect } = require('inferno-redux')
 const css = require('glamor').css
 const FileInput = require('./fileInput')
@@ -41,11 +41,11 @@ const enhance = connect(
 module.exports = enhance(Header)
 
 function Header ({ filename }) {
-  return h(`.${styles.header}`, [
-    h(`h1.${styles.title}`, 'Hexitor'),
-    h(`.${styles.tabs}`, [
-      filename && h(`.${styles.tab}`, filename)
-    ].filter(Boolean)),
+  return h('div', { className: styles.header }, [
+    h('h1', { className: styles.title }, 'Hexitor'),
+    h('div', { className: styles.tabs },
+      filename && h('div', { className: styles.tab }, filename)
+    ),
     h(FileInput)
   ])
 }

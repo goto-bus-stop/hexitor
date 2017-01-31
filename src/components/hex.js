@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const css = require('glamor').css
 const DataView = require('./dataView')
 

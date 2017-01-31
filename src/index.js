@@ -1,5 +1,5 @@
 const Inferno = require('inferno')
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { createStore } = require('redux')
 const { Provider } = require('inferno-redux')
 const App = require('./components/app')

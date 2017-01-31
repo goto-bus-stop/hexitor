@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { linkEvent } = require('inferno')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
@@ -53,7 +53,7 @@ function onScroll (setVisibleArea, event) {
   onUpdate(setVisibleArea, event.target)
 }
 
-const Wrapper = (props) => h(`.${styles.split}`, props)
+const Wrapper = (props) => h('div', Object.assign({ className: styles.split }, props))
 
 function MainViews ({
   hexWidth,
@@ -66,10 +66,14 @@ function MainViews ({
     onComponentDidMount: onUpdate.bind(null, setVisibleArea),
     onScroll: linkEvent(setVisibleArea, onScroll)
   }, [
-    h(`.${styles.gutter}`, [ h(Gutter) ]),
-    h(`.${styles.hex}`, { style: { width: hexWidth } },
-      [ h(Hex, { width: hexWidth, onCellSize: reportHexCellSize }) ]),
-    h(`.${styles.ascii}`, { style: { width: asciiWidth } },
-      [ h(Ascii, { width: asciiWidth, onCellSize: reportAsciiCellSize }) ])
+    h('div', { className: styles.gutter },
+      h(Gutter)
+    ),
+    h('div', { className: styles.hex, style: { width: hexWidth } },
+      h(Hex, { width: hexWidth, onCellSize: reportHexCellSize })
+    ),
+    h('div', { className: styles.ascii, style: { width: asciiWidth } },
+      h(Ascii, { width: asciiWidth, onCellSize: reportAsciiCellSize })
+    )
   ])
 }

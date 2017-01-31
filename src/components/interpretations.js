@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { connect } = require('inferno-redux')
 const { css } = require('glamor')
 const pure = require('../utils/pure')
@@ -46,9 +46,10 @@ function onInputClick (event) {
 }
 
 const createValueComponent = (label, reader) => pure()(({ buffer, cursor }) =>
-  h(`div.${styles.valueComponent}`, [
-    h(`label.${styles.valuePart}.${styles.label}`, label),
-    h(`input.${styles.valuePart}.${styles.input}`, {
+  h('div', { className: styles.valueComponent }, [
+    h('label', { className: css(styles.valuePart, styles.label) }, label),
+    h('input', {
+      className: css(styles.valuePart, styles.input),
       value: reader(buffer, cursor),
       readonly: true,
       onClick: onInputClick
@@ -63,31 +64,36 @@ const AsInt16LE = createValueComponent('Signed 16 bit', (b, i) => b.readInt16LE(
 const AsInt32LE = createValueComponent('Signed 32 bit', (b, i) => b.readInt32LE(i))
 const AsFloatLE = createValueComponent('Float 32 bit', (b, i) => b.readFloatLE(i))
 const AsDoubleLE = createValueComponent('Double 64 bit', (b, i) => b.readDoubleLE(i))
+
 const AsHexadecimal = createValueComponent('Hexadecimal 8 bit', (b, i) => b[i].toString(16).padStart(2, '0').toUpperCase())
 const AsOctal = createValueComponent('Octal 8 bit', (b, i) => b[i].toString(8).padStart(3, '0'))
 const AsBinary = createValueComponent('Binary 8 bit', (b, i) => b[i].toString(2).padStart(8, '0'))
+const AsAscii = createValueComponent('ASCII', (b, i) => String.fromCharCode(b[i]))
+const AsUtf8 = createValueComponent('UTF-8', (b, i) => b.readUtf8(i))
 
 function Interpretations ({ buffer, cursor }) {
   if (!buffer) {
     return h('div')
   }
-  return h(`.${styles.interpretations}`, [
-    h('div', [
+  return h('div', { className: styles.interpretations }, [
+    h('div', {}, [
       h(AsInt8, { buffer, cursor }),
       h(AsUInt8, { buffer, cursor }),
       h(AsInt16LE, { buffer, cursor }),
       h(AsUInt16LE, { buffer, cursor })
     ]),
-    h('div', [
+    h('div', {}, [
       h(AsInt32LE, { buffer, cursor }),
       h(AsUInt32LE, { buffer, cursor }),
       h(AsFloatLE, { buffer, cursor }),
       h(AsDoubleLE, { buffer, cursor })
     ]),
-    h('div', [
+    h('div', {}, [
       h(AsHexadecimal, { buffer, cursor }),
       h(AsOctal, { buffer, cursor }),
-      h(AsBinary, { buffer, cursor })
+      h(AsBinary, { buffer, cursor }),
+      h(AsAscii, { buffer, cursor }),
+      h(AsUtf8, { buffer, cursor })
     ])
   ])
 }

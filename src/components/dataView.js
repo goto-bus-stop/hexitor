@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const { linkEvent } = require('inferno')
 const Component = require('inferno-component')
 const { connect } = require('inferno-redux')
@@ -73,7 +73,7 @@ class DataView extends Component {
     const { cellSize } = this.state
 
     if (!buffer) {
-      return h(`.${styles.field}`, { ref: this.refContainer })
+      return h('div', { className: styles.field, ref: this.refContainer })
     }
 
     const linesFromTop = this.props.firstVisibleLine
@@ -100,11 +100,11 @@ class DataView extends Component {
     }
 
     const topPadding = linesFromTop * this.props.lineHeight
-    return h(`.${styles.field}`, { ref: this.refContainer }, [
-      h('div', { style: { height: this.props.totalHeight } }, [
+    return h('div', { className: styles.field, ref: this.refContainer },
+      h('div', { style: { height: this.props.totalHeight } },
         h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
-      ])
-    ])
+      )
+    )
   }
 }
 
@@ -152,5 +152,5 @@ const LineView = pure(lineStateIsEqual)(function LineView ({
     }))
   }
 
-  return h('span', cells)
+  return h('span', {}, cells)
 })

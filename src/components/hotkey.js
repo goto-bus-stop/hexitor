@@ -1,4 +1,4 @@
-const h = require('inferno-hyperscript')
+const h = require('inferno-create-element')
 const Component = require('inferno-component')
 const { connect } = require('inferno-redux')
 const Mousetrap = require('mousetrap')
@@ -39,7 +39,7 @@ module.exports.Hotkeys = enhance(Hotkeys)
 function Hotkeys (handlers) {
   const { dispatch } = handlers
 
-  return h('span', Object.keys(handlers)
+  return h('span', {}, Object.keys(handlers)
     .filter((keys) => keys !== 'dispatch')
     .map((keys) => h(Hotkey, {
       dispatch,
