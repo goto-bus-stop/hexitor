@@ -1,20 +1,22 @@
 const h = require('inferno-create-element')
-const css = require('glamor').css
+const css = require('tagged-css-modules')
 const DataView = require('./dataView')
 
-const styles = {
-  cell: css({
-    display: 'inline-block',
-    padding: '0 5px'
-  }),
-  selected: css({
-    background: 'yellow',
-    color: 'black'
-  }),
-  empty: css({
-    color: '#777'
-  })
-}
+const styles = css`
+  .cell {
+    display: inline-block;
+    padding: 0 5px;
+  }
+
+  .selected {
+    background: yellow;
+    color: black;
+  }
+
+  .empty {
+    color: #777;
+  }
+`
 
 module.exports = DataView.make(Cell)
 
@@ -30,10 +32,10 @@ for (let i = 0; i <= 0xFF; i++) {
 function Cell ({ byte, selected, onSelect }) {
   return h('span', {
     onClick: onSelect,
-    className: css(
+    className: [
       styles.cell,
       selected && styles.selected,
       byte === 0 && styles.empty
-    )
+    ].filter(Boolean).join(' ')
   }, formatted[byte])
 }

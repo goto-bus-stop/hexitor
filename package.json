@@ -12,7 +12,6 @@
     "deep-extend": "^0.4.1",
     "ecstatic": "^2.1.0",
     "file-component": "^0.1.0",
-    "glamor": "^2.20.20",
     "inferno": "^1.1.2",
     "inferno-component": "^1.1.2",
     "inferno-hyperscript": "^1.1.2",
@@ -20,7 +19,8 @@
     "is-ascii-control-char-code": "^1.0.0",
     "mousetrap": "^1.6.0",
     "reduce-reducers": "^0.1.2",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "tagged-css-modules": "github:goto-bus-stop/tagged-css-modules"
   },
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.15.0",
