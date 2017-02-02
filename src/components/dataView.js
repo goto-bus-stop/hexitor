@@ -2,7 +2,7 @@ const h = require('inferno-create-element')
 const { linkEvent } = require('inferno')
 const Component = require('inferno-component')
 const { connect } = require('inferno-redux')
-const { css } = require('glamor')
+const css = require('tagged-css-modules')
 const {
   moveCursor,
   selectLineHeight,
@@ -12,18 +12,17 @@ const {
 const measure = require('../utils/measure')
 const pure = require('../utils/pure')
 
-const type = {
-  font: '16px monospace',
-  color: 'white'
-}
+const styles = css`
+  .type, .field {
+    font: 16px monospace;
+    color: white;
+  }
 
-const styles = {
-  type: css(type),
-  field: css({
-    width: '100%',
-    background: '#1b1b1b'
-  }, type)
-}
+  .field {
+    width: 100%;
+    background: #1b1b1b;
+  }
+`
 
 const enhance = connect(
   state => ({

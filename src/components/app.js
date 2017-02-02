@@ -1,36 +1,37 @@
 const h = require('inferno-create-element')
-const css = require('glamor').css
+const css = require('tagged-css-modules')
 const Header = require('./header')
 const Main = require('./mainViews')
 const Interpretations = require('./interpretations')
 const { Hotkeys } = require('./hotkey')
 const { moveCursor } = require('../state')
 
-css.global('*, *::after, *::before', {
-  boxSizing: 'border-box'
-})
+const styles = css`
+  :global(*, *::after, *::before) {
+    box-sizing: border-box;
+  }
 
-css.global('body', {
-  background: '#333',
-  margin: 0,
-  padding: 0,
-  font: '10pt Ubuntu'
-})
+  :global(body) {
+    background: #333;
+    margin: 0;
+    padding: 0;
+    font: 10pt Ubuntu;
+  }
 
-const styles = {
-  main: css({
-    position: 'absolute',
-    top: 50,
-    bottom: 150,
-    width: '100%'
-  }),
-  footer: css({
-    position: 'absolute',
-    height: 150,
-    bottom: 0,
-    width: '100%'
-  })
-}
+  .main {
+    position: absolute;
+    top: 50px;
+    bottom: 150px;
+    width: 100%;
+  }
+
+  .footer {
+    position: absolute;
+    height: 150px;
+    bottom: 0;
+    width: 100%;
+  }
+`
 
 module.exports = function App () {
   return h('div', {}, [

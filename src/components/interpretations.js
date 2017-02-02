@@ -1,36 +1,40 @@
 const h = require('inferno-create-element')
 const { connect } = require('inferno-redux')
-const { css } = require('glamor')
+const css = require('tagged-css-modules')
 const pure = require('../utils/pure')
 
-const styles = {
-  interpretations: css({
-    display: 'flex',
-    justifyContent: 'flex-start'
-  }),
-  valueComponent: css({
-    display: 'flex',
-    margin: '4px 0'
-  }),
-  valuePart: css({
-    width: 200,
-    height: 24,
-    lineHeight: '24px',
-    display: 'block'
-  }),
-  label: css({
-    textAlign: 'right',
-    paddingRight: 24,
-    color: 'white'
-  }),
-  input: css({
-    padding: '0 .75em',
-    lineHeight: 1.5,
-    font: 'inherit',
-    borderRadius: 3,
-    border: '1px solid #dbdbdb'
-  })
-}
+const styles = css`
+  .interpretations {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .valueComponent {
+    display: flex;
+    margin: 4px 0;
+  }
+
+  .valuePart {
+    width: 200px;
+    height: 24px;
+    line-height: 24px;
+    display: block;
+  }
+
+  .label {
+    text-align: right;
+    padding-right: 24px;
+    color: white;
+  }
+
+  .input {
+    padding: 0 .75em;
+    line-height: 1.5;
+    font: inherit;
+    border-radius: 3px;
+    border: 1px solid #dbdbdb;
+  }
+`
 
 const enhance = connect(
   (state) => ({
@@ -47,9 +51,9 @@ function onInputClick (event) {
 
 const createValueComponent = (label, reader) => pure()(({ buffer, cursor }) =>
   h('div', { className: styles.valueComponent }, [
-    h('label', { className: css(styles.valuePart, styles.label) }, label),
+    h('label', { className: `${styles.valuePart} ${styles.label}` }, label),
     h('input', {
-      className: css(styles.valuePart, styles.input),
+      className: `${styles.valuePart} ${styles.input}`,
       value: reader(buffer, cursor),
       readonly: true,
       onClick: onInputClick

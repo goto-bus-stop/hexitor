@@ -1,23 +1,28 @@
 const h = require('inferno-create-element')
 const { connect } = require('inferno-redux')
-const { css } = require('glamor')
+const css = require('tagged-css-modules')
 const { selectLineHeight, selectTotalHeight, selectTotalLines } = require('../state')
 const pure = require('../utils/pure')
 
-const styles = {
-  gutter: css({
-    width: '100%',
-    background: '#1b1b1b',
-    font: '16px monospace',
-    textAlign: 'right',
-    color: 'white'
-  }),
-  selected: css({
-    color: '#ff7'
-  }),
-  padding: css({ opacity: 0.5 }),
-  hex: css({})
-}
+const styles = css`
+  .gutter {
+    width: 100%;
+    background: #1b1b1b;
+    font: 16px monospace;
+    text-align: right;
+    color: white;
+  }
+
+  .selected {
+    color: #777;
+  }
+
+  .padding {
+    opacity: 0.5;
+  }
+
+  .hex {}
+`
 
 const enhance = connect(
   (state) => ({

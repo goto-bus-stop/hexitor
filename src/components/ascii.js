@@ -1,25 +1,28 @@
 const h = require('inferno-create-element')
-const css = require('glamor').css
+const css = require('tagged-css-modules')
 const isControlCharacter = require('is-ascii-control-char-code')
 const DataView = require('./dataView')
 
-const styles = {
-  field: css({
-    font: '12pt monospace',
-    color: 'white',
-    width: '100%'
-  }),
-  cell: css({
-    display: 'inline-block'
-  }),
-  selected: css({
-    background: 'yellow',
-    color: 'black'
-  }),
-  control: css({
-    color: '#777'
-  })
-}
+const styles = css`
+  .field {
+    font: 12pt monospace;
+    color: white;
+    width: 100%;
+  }
+
+  .cell {
+    display: inline-block;
+  }
+
+  .selected {
+    background: yellow;
+    color: black;
+  }
+
+  .control {
+    color: #777;
+  }
+`
 
 module.exports = DataView.make(Cell)
 
@@ -37,10 +40,10 @@ function Cell ({ byte, selected, onSelect }) {
   const isCtrl = isControlCharacter(byte) || byte > 0x7F
   return h('span', {
     onClick: onSelect,
-    className: css(
+    className: [
       styles.cell,
       selected && styles.selected,
       isCtrl && styles.control
-    )
+    ].filter(Boolean).join(' ')
   }, formatByte(byte, isCtrl))
 }

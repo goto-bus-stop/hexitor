@@ -1,7 +1,7 @@
 const h = require('inferno-create-element')
 const { linkEvent } = require('inferno')
 const { connect } = require('inferno-redux')
-const { css } = require('glamor')
+const css = require('tagged-css-modules')
 const Gutter = require('./gutter')
 const Hex = require('./hex')
 const Ascii = require('./ascii')
@@ -10,21 +10,23 @@ const { setVisibleArea, reportCellSize } = require('../state')
 const GUTTER_WIDTH = 100
 const BORDER_WIDTH = 2
 
-const styles = {
-  split: css({
-    display: 'flex',
-    height: '100%',
-    width: '100%',
-    overflowY: 'auto'
-  }),
-  gutter: css({
-    width: GUTTER_WIDTH,
-    background: '#1b1b1b',
-    borderRight: '2px solid #000'
-  }),
-  hex: css({ }),
-  ascii: css({ })
-}
+const styles = css`
+  .split {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .gutter {
+    width: ${GUTTER_WIDTH};
+    background: #1b1b1b;
+    border-right: 2px solid #000;
+  }
+
+  .hex {}
+  .ascii {}
+`
 
 const enhance = connect(
   (state) => ({
