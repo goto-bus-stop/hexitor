@@ -20,7 +20,7 @@
     "mousetrap": "^1.6.0",
     "reduce-reducers": "^0.1.2",
     "redux": "^3.6.0",
-    "tagged-css-modules": "github:goto-bus-stop/tagged-css-modules"
+    "tagged-css-modules": "^0.1.1"
   },
   "devDependencies": {
     "babel-plugin-transform-runtime": "^6.15.0",

@@ -3,6 +3,7 @@
     "latest"
   ],
   "plugins": [
-    "transform-runtime"
+    "transform-runtime",
+    "tagged-css-modules/babel"
   ]
 }
