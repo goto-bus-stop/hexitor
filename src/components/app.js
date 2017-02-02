@@ -7,11 +7,11 @@ const { Hotkeys } = require('./hotkey')
 const { moveCursor } = require('../state')
 
 const styles = css`
-  :global(*, *::after, *::before) {
-    box-sizing: border-box;
-  }
+  :global * { box-sizing: border-box; }
+  :global *::after { box-sizing: border-box; }
+  :global *::before { box-sizing: border-box; }
 
-  :global(body) {
+  :global body {
     background: #333;
     margin: 0;
     padding: 0;
