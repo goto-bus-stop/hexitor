@@ -44,6 +44,8 @@ function getProportionalWidths (freeWidth, { hex, ascii }) {
   return { hex: hexWidth, ascii: asciiWidth }
 }
 
+const LINES_CHUNK_SIZE = 1
+
 function updateVisibleLines (state) {
   const { visible, cellSizes } = state
 
@@ -56,8 +58,14 @@ function updateVisibleLines (state) {
 
   return extend({}, state, {
     widths,
-    firstVisibleLine: Math.floor(visible.top / lineHeight / 10) * 10,
-    visibleLines: Math.ceil(visible.height / lineHeight / 10 + 1) * 10,
+    firstVisibleLine: Math.max(
+      0,
+      LINES_CHUNK_SIZE * Math.floor(visible.top / lineHeight / LINES_CHUNK_SIZE)
+    ),
+    visibleLines: Math.min(
+      Math.ceil(visible.height / lineHeight),
+      LINES_CHUNK_SIZE * Math.ceil(visible.height / lineHeight / LINES_CHUNK_SIZE)
+    ),
     bytesPerLine
   })
 }
