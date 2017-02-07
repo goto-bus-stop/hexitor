@@ -14,7 +14,7 @@ const styles = css`
   }
 
   .selected {
-    color: #777;
+    color: #ff7;
   }
 
   .padding {
