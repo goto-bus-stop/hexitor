@@ -1,14 +1,11 @@
-const empty = require('empty-element')
 const bel = require('bel')
 const css = require('tagged-css-modules')
 const {
   dispatch,
   moveCursor,
   selectLineHeight,
-  selectTotalLines,
   selectTotalHeight
 } = require('../state')
-const measure = require('../utils/measure')
 const connect = require('../utils/connect')
 
 const styles = css`
@@ -93,7 +90,7 @@ function DataView ({ renderCell, onCellSize }) {
     }, {})
   }
 
-  function removeOldChunks(previousChunks, nextChunks) {
+  function removeOldChunks (previousChunks, nextChunks) {
     const nextChunkIds = chunksById(nextChunks)
 
     // Remove chunks that have gone out of view
@@ -104,7 +101,7 @@ function DataView ({ renderCell, onCellSize }) {
     })
   }
 
-  function insertNewChunks(nextChunks) {
+  function insertNewChunks (nextChunks) {
     let insertBefore = true
     const firstChild = visibleWrapper.firstChild
     nextChunks.forEach((chunk) => {
@@ -137,7 +134,6 @@ function DataView ({ renderCell, onCellSize }) {
     // Create elements for new chunks.
     for (let i = 0; i < visibleLines; i++) {
       const lineStart = (firstVisibleLine + i) * bytesPerLine
-      const lineEnd = lineStart + bytesPerLine
 
       // Stop if we're at the end of the file.
       if (lineStart > buffer.length) {
@@ -196,7 +192,6 @@ function DataView ({ renderCell, onCellSize }) {
   return connect((state, el) => {
     const buffer = state.currentFile.buffer
     const cursor = state.cursor.position
-    const visible = state.view.visible
     const lineHeight = selectLineHeight(state)
     const totalHeight = selectTotalHeight(state)
     const firstVisibleLine = state.view.firstVisibleLine
@@ -207,13 +202,15 @@ function DataView ({ renderCell, onCellSize }) {
     heightWrapper.style.height = `${totalHeight}px`
     visibleWrapper.style.transform = `translateY(${topPadding}px)`
 
-    if (buffer) update({
-      buffer,
-      cursor,
-      firstVisibleLine,
-      visibleLines,
-      bytesPerLine
-    })
+    if (buffer) {
+      update({
+        buffer,
+        cursor,
+        firstVisibleLine,
+        visibleLines,
+        bytesPerLine
+      })
+    }
   })(bel`
     <span>
       <div class=${styles.field} onload=${onload} onclick=${onclick}>

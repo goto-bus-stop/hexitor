@@ -1,5 +1,4 @@
 const bel = require('bel')
-const h = require('inferno-create-element')
 const css = require('tagged-css-modules')
 const DataView = require('./dataView')
 

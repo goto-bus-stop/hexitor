@@ -52,8 +52,9 @@ const createValueComponent = (label, reader) => () => {
     />
   `
 
-  const update = ({ buffer, cursor }) =>
+  const update = ({ buffer, cursor }) => {
     input.value = buffer ? reader(buffer, cursor) : ''
+  }
 
   const element = bel`
     <div class=${styles.valueComponent}>

@@ -1,4 +1,5 @@
 const bel = require('bel')
+const empty = require('empty-element')
 const css = require('tagged-css-modules')
 const { selectLineHeight, selectTotalHeight, selectTotalLines } = require('../state')
 const connect = require('../utils/connect')
@@ -45,8 +46,6 @@ function Byte ({ byte, selected }) {
 function Gutter () {
   const markersWrapper = bel`<div />`
 
-  let previousMarkers = []
-
   function updateMarkers ({
     firstVisibleLine,
     visibleLines,
@@ -54,10 +53,9 @@ function Gutter () {
     totalLines,
     cursor
   }) {
-    require('empty-element')(markersWrapper)
+    empty(markersWrapper)
 
     let firstByte = firstVisibleLine * bytesPerLine
-    const markers = []
     const end = Math.min(firstVisibleLine + visibleLines, totalLines)
     for (let i = firstVisibleLine; i < end; i++) {
       markersWrapper.appendChild(Byte({
