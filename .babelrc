@@ -4,6 +4,7 @@
   ],
   "plugins": [
     "transform-runtime",
-    "tagged-css-modules/babel"
+    "tagged-css-modules/babel",
+    "yo-yoify"
   ]
 }

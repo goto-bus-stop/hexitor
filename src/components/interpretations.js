@@ -1,7 +1,6 @@
-const h = require('inferno-create-element')
-const { connect } = require('inferno-redux')
+const bel = require('bel')
 const css = require('tagged-css-modules')
-const pure = require('../utils/pure')
+const connect = require('../utils/connect')
 
 const styles = css`
   .interpretations {
@@ -22,12 +21,14 @@ const styles = css`
   }
 
   .label {
+    composes: valuePart;
     text-align: right;
     padding-right: 24px;
     color: white;
   }
 
   .input {
+    composes: valuePart;
     padding: 0 .75em;
     line-height: 1.5;
     font: inherit;
@@ -36,29 +37,33 @@ const styles = css`
   }
 `
 
-const enhance = connect(
-  (state) => ({
-    buffer: state.currentFile.buffer,
-    cursor: state.cursor.position
-  })
-)
-
-module.exports = enhance(pure()(Interpretations))
+module.exports = Interpretations
 
 function onInputClick (event) {
   event.target.select()
 }
 
-const createValueComponent = (label, reader) => pure()(({ buffer, cursor }) =>
-  h('div', { className: styles.valueComponent }, [
-    h('label', { className: `${styles.valuePart} ${styles.label}` }, label),
-    h('input', {
-      className: `${styles.valuePart} ${styles.input}`,
-      value: reader(buffer, cursor),
-      readonly: true,
-      onClick: onInputClick
-    })
-  ]))
+const createValueComponent = (label, reader) => () => {
+  const input = bel`
+    <input
+      class=${styles.input}
+      readonly
+      onclick=${onInputClick}
+    />
+  `
+
+  const update = ({ buffer, cursor }) =>
+    input.value = buffer ? reader(buffer, cursor) : ''
+
+  const element = bel`
+    <div class=${styles.valueComponent}>
+      <label class=${styles.label}>${label}</label>
+      ${input}
+    </div>
+  `
+
+  return { update, render: () => element }
+}
 
 const AsUInt8 = createValueComponent('Unsigned 8 bit', (b, i) => b.readUInt8(i))
 const AsUInt16LE = createValueComponent('Unsigned 16 bit', (b, i) => b.readUInt16LE(i))
@@ -75,29 +80,33 @@ const AsBinary = createValueComponent('Binary 8 bit', (b, i) => b[i].toString(2)
 const AsAscii = createValueComponent('ASCII', (b, i) => String.fromCharCode(b[i]))
 const AsUtf8 = createValueComponent('UTF-8', (b, i) => b.readUtf8(i))
 
-function Interpretations ({ buffer, cursor }) {
-  if (!buffer) {
-    return h('div')
-  }
-  return h('div', { className: styles.interpretations }, [
-    h('div', {}, [
-      h(AsInt8, { buffer, cursor }),
-      h(AsUInt8, { buffer, cursor }),
-      h(AsInt16LE, { buffer, cursor }),
-      h(AsUInt16LE, { buffer, cursor })
-    ]),
-    h('div', {}, [
-      h(AsInt32LE, { buffer, cursor }),
-      h(AsUInt32LE, { buffer, cursor }),
-      h(AsFloatLE, { buffer, cursor }),
-      h(AsDoubleLE, { buffer, cursor })
-    ]),
-    h('div', {}, [
-      h(AsHexadecimal, { buffer, cursor }),
-      h(AsOctal, { buffer, cursor }),
-      h(AsBinary, { buffer, cursor }),
-      h(AsAscii, { buffer, cursor }),
-      h(AsUtf8, { buffer, cursor })
-    ])
-  ])
+function Interpretations () {
+  const representations = [
+    [AsInt8(), AsUInt8(), AsInt16LE(), AsUInt16LE()],
+    [AsInt32LE(), AsUInt32LE(), AsFloatLE(), AsDoubleLE()],
+    [AsHexadecimal(), AsOctal(), AsBinary(), AsAscii(), AsUtf8()]
+  ]
+
+  const columns = representations.map((col) => bel`
+    <div>
+      ${col.map((component) => component.render())}
+    </div>
+  `)
+
+  return connect((state) => {
+    const props = {
+      buffer: state.currentFile.buffer,
+      cursor: state.cursor.position
+    }
+
+    representations.forEach((column) => {
+      column.forEach((repr) => {
+        repr.update(props)
+      })
+    })
+  })(bel`
+    <div class=${styles.interpretations}>
+      ${columns}
+    </div>
+  `)
 }

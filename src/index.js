@@ -1,15 +1,5 @@
-const Inferno = require('inferno')
-const h = require('inferno-create-element')
-const { createStore } = require('redux')
-const { Provider } = require('inferno-redux')
 const App = require('./components/app')
-const reducer = require('./state')
 
-const store = createStore(reducer)
+document.body.appendChild(App())
 
-Inferno.render(
-  h(Provider, { store }, h(App)),
-  document.querySelector('#app')
-)
-
-window.store = store
+window.store = require('./state')

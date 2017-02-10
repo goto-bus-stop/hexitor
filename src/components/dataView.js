@@ -1,155 +1,228 @@
-const h = require('inferno-create-element')
-const { linkEvent } = require('inferno')
-const Component = require('inferno-component')
-const { connect } = require('inferno-redux')
+const empty = require('empty-element')
+const bel = require('bel')
 const css = require('tagged-css-modules')
 const {
+  dispatch,
   moveCursor,
   selectLineHeight,
   selectTotalLines,
   selectTotalHeight
 } = require('../state')
 const measure = require('../utils/measure')
-const pure = require('../utils/pure')
+const connect = require('../utils/connect')
 
 const styles = css`
-  .type, .field {
-    font: 16px monospace;
-    color: white;
-  }
-
   .field {
     width: 100%;
+    font: 16px monospace;
+    color: white;
     background: #1b1b1b;
   }
 `
 
-const enhance = connect(
-  state => ({
-    buffer: state.currentFile.buffer,
-    cursor: state.cursor.position,
-    visible: state.view.visible,
-    lineHeight: selectLineHeight(state),
-    totalHeight: selectTotalHeight(state),
-    firstVisibleLine: state.view.firstVisibleLine,
-    visibleLines: state.view.visibleLines,
-    bytesPerLine: state.view.bytesPerLine
-  }),
-  { setCursor: moveCursor }
-)
+module.exports = DataView
 
-class DataView extends Component {
-  constructor (props) {
-    super(props)
+function replaceElement (oldElement, newElement) {
+  if (oldElement.parentNode) {
+    oldElement.parentNode.insertBefore(newElement, oldElement)
+    oldElement.parentNode.removeChild(oldElement)
+  }
+  return newElement
+}
 
-    this.state = {
-      cellSize: { width: Infinity, height: Infinity }
-    }
+function DataView ({ renderCell, onCellSize }) {
+  const visibleWrapper = bel`<div />`
+  const heightWrapper = bel`
+    <div>${visibleWrapper}</div>
+  `
 
-    this.refContainer = (container) => {
-      this.container = container
+  let previousChunks = []
+
+  let selectedElement
+
+  function getCell ({ byte, selected, byteIndex }) {
+    const cell = renderCell({ byte, selected })
+
+    cell.dataset.byteIndex = byteIndex
+    return cell
+  }
+
+  function onload (el) {
+    const cell = renderCell({
+      byte: 0,
+      selected: false,
+      onSelect: () => {}
+    })
+
+    el.appendChild(cell)
+    const size = cell.getBoundingClientRect()
+    el.removeChild(cell)
+
+    onCellSize(size)
+  }
+
+  function onclick (event) {
+    const data = event.target.dataset
+    if (typeof data.byteIndex !== 'undefined') {
+      dispatch(moveCursor(parseInt(data.byteIndex, 10)))
     }
   }
 
-  componentDidMount () {
-    const cellSize = measure(
-      h(this.props.cellComponent, {
-        byte: 0,
-        selected: false,
-        onSelect: () => {}
-      }),
-      this.container
-    )
-
-    if (this.props.onCellSize) {
-      this.props.onCellSize(cellSize)
+  function renderLine ({
+    buffer,
+    cursor,
+    bytesPerLine,
+    lineStart
+  }) {
+    const line = bel`<span />`
+    for (let b = 0; b < bytesPerLine; b += 1) {
+      const byteIndex = lineStart + b
+      line.appendChild(getCell({
+        byteIndex,
+        byte: buffer[byteIndex],
+        selected: byteIndex === cursor
+      }))
     }
-    this.setState({ cellSize })
+    return line
   }
 
-  render () {
-    const { cellComponent, buffer, cursor, setCursor } = this.props
-    const { cellSize } = this.state
+  function chunksById (chunks) {
+    return chunks.reduce((ids, chunk) => {
+      ids[chunk.lineStart] = chunk.element
+      return ids
+    }, {})
+  }
 
-    if (!buffer) {
-      return h('div', { className: styles.field, ref: this.refContainer })
-    }
+  function removeOldChunks(previousChunks, nextChunks) {
+    const nextChunkIds = chunksById(nextChunks)
 
-    const linesFromTop = this.props.firstVisibleLine
-    const linesVisible = this.props.visibleLines
-    const bytesPerLine = this.props.bytesPerLine
+    // Remove chunks that have gone out of view
+    previousChunks.forEach((chunk) => {
+      if (!nextChunkIds[chunk.lineStart]) {
+        visibleWrapper.removeChild(chunk.element)
+      }
+    })
+  }
 
+  function insertNewChunks(nextChunks) {
+    let insertBefore = true
+    const firstChild = visibleWrapper.firstChild
+    nextChunks.forEach((chunk) => {
+      if (chunk.new) {
+        // New chunks should be added *before* the existing chunks.
+        // Until we find a chunk that already existed--in that case, we assume
+        // it's a contiguous block of rendered chunks, so we continue by adding
+        // new chunks after the end of the block.
+        if (insertBefore && firstChild) {
+          visibleWrapper.insertBefore(chunk.element, firstChild)
+        } else {
+          visibleWrapper.appendChild(chunk.element)
+        }
+      } else {
+        insertBefore = false
+      }
+    })
+  }
+
+  function update ({
+    buffer,
+    cursor,
+    firstVisibleLine,
+    visibleLines,
+    bytesPerLine
+  }) {
     const chunks = []
-    for (let i = 0; i < linesVisible; i++) {
-      const lineStart = (linesFromTop + i) * bytesPerLine
+    const previousChunkIds = chunksById(previousChunks)
+
+    // Create elements for new chunks.
+    for (let i = 0; i < visibleLines; i++) {
+      const lineStart = (firstVisibleLine + i) * bytesPerLine
       const lineEnd = lineStart + bytesPerLine
 
+      // Stop if we're at the end of the file.
       if (lineStart > buffer.length) {
         break
       }
 
-      chunks.push(h(LineView, {
-        key: lineStart,
-        cellComponent,
-        chunk: buffer.view(lineStart, lineEnd),
-        chunkOffset: lineStart,
-        setCursor,
-        cursor: cursor >= lineStart && cursor < lineEnd ? cursor - lineStart : null
-      }))
+      const chunk = { lineStart }
+      chunks.push(chunk)
+
+      // Reuse the old element if this chunk was already visible
+      if (previousChunkIds[lineStart]) {
+        chunk.element = previousChunkIds[lineStart]
+        continue
+      }
+
+      // Render a new element if the chunk was not previously visible.
+      chunk.element = renderLine({
+        buffer,
+        cursor,
+        bytesPerLine,
+        lineStart
+      })
+      chunk.new = true
     }
 
-    const topPadding = linesFromTop * this.props.lineHeight
-    return h('div', { className: styles.field, ref: this.refContainer },
-      h('div', { style: { height: this.props.totalHeight } },
-        h('div', { style: { transform: `translateY(${topPadding}px)` } }, chunks)
-      )
-    )
-  }
-}
+    // Remove chunks that have gone out of view.
+    removeOldChunks(previousChunks, chunks)
 
-DataView.defaultProps = {
-  width: 1
-}
+    // Add chunks that are now in view.
+    insertNewChunks(chunks)
 
-module.exports = enhance(DataView)
+    // Remember chunks so we can diff on the next render.
+    previousChunks = chunks
 
-function cellStateIsEqual (a, b) {
-  return a.selected === b.selected &&
-    a.byte === b.byte &&
-    // Compare linkEvent() result
-    a.onSelect.data === b.onSelect.data &&
-    a.onSelect.event === b.onSelect.event
-}
-
-/**
- * Create a DataView component that uses the given cell renderer.
- */
-module.exports.make = (renderCell) => {
-  const PureCell = pure(cellStateIsEqual)(renderCell)
-  return (props) => h(module.exports, Object.assign({ cellComponent: PureCell }, props))
-}
-
-function lineStateIsEqual (a, b) {
-  return a.chunk.equals(b.chunk) &&
-    a.cursor === b.cursor &&
-    a.onSelect === b.onSelect
-}
-
-const LineView = pure(lineStateIsEqual)(function LineView ({
-  cellComponent,
-  chunk,
-  chunkOffset,
-  cursor,
-  setCursor
-}) {
-  const cells = Array(chunk.byteLength)
-  for (let i = 0; i < chunk.byteLength; i += 1) {
-    cells.push(h(cellComponent, {
-      byte: chunk[i],
-      onSelect: linkEvent(chunkOffset + i, setCursor),
-      selected: i === cursor
-    }))
+    let nextSelectedElement = visibleWrapper.querySelector(`[data-byte-index="${cursor}"]`)
+    if (selectedElement !== nextSelectedElement) {
+      if (selectedElement) {
+        const previousCursor = parseInt(selectedElement.dataset.byteIndex, 10)
+        selectedElement = replaceElement(selectedElement, getCell({
+          byteIndex: previousCursor,
+          byte: buffer[previousCursor],
+          selected: false
+        }))
+      }
+      if (nextSelectedElement) {
+        nextSelectedElement = replaceElement(nextSelectedElement, getCell({
+          byteIndex: cursor,
+          byte: buffer[cursor],
+          selected: true
+        }))
+      }
+    }
+    selectedElement = nextSelectedElement
   }
 
-  return h('span', {}, cells)
-})
+  return connect((state, el) => {
+    const buffer = state.currentFile.buffer
+    const cursor = state.cursor.position
+    const visible = state.view.visible
+    const lineHeight = selectLineHeight(state)
+    const totalHeight = selectTotalHeight(state)
+    const firstVisibleLine = state.view.firstVisibleLine
+    const visibleLines = state.view.visibleLines
+    const bytesPerLine = state.view.bytesPerLine
+
+    const topPadding = firstVisibleLine * lineHeight
+    heightWrapper.style.height = `${totalHeight}px`
+    visibleWrapper.style.transform = `translateY(${topPadding}px)`
+
+    if (buffer) update({
+      buffer,
+      cursor,
+      firstVisibleLine,
+      visibleLines,
+      bytesPerLine
+    })
+  })(bel`
+    <span>
+      <div class=${styles.field} onload=${onload} onclick=${onclick}>
+        ${heightWrapper}
+      </div>
+    </span>
+  `)
+}
+
+DataView.make = function makeDataView (renderCell) {
+  return (props) => DataView(Object.assign({ renderCell }, props))
+}

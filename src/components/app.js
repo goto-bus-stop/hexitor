@@ -1,4 +1,4 @@
-const h = require('inferno-create-element')
+const bel = require('bel')
 const css = require('tagged-css-modules')
 const Header = require('./header')
 const Main = require('./mainViews')
@@ -34,19 +34,22 @@ const styles = css`
 `
 
 module.exports = function App () {
-  return h('div', {}, [
-    h(Header),
-    h('div', { className: styles.main },
-      h(Main)
-    ),
-    h('div', { className: styles.footer },
-      h(Interpretations)
-    ),
-    h(Hotkeys, {
-      left: () => moveCursor((pos) => pos - 1),
-      right: () => moveCursor((pos) => pos + 1),
-      up: (state) => moveCursor((pos) => pos - state.view.bytesPerLine),
-      down: (state) => moveCursor((pos) => pos + state.view.bytesPerLine)
-    })
-  ])
+  const hotkeys = Hotkeys({
+    left: () => moveCursor((pos) => pos - 1),
+    right: () => moveCursor((pos) => pos + 1),
+    up: (state) => moveCursor((pos) => pos - state.view.bytesPerLine),
+    down: (state) => moveCursor((pos) => pos + state.view.bytesPerLine)
+  })
+
+  return hotkeys(bel`
+    <div>
+      ${Header()}
+      <div class=${styles.main}>
+        ${Main()}
+      </div>
+      <div class=${styles.footer}>
+        ${Interpretations()}
+      </div>
+    </div>
+  `)
 }

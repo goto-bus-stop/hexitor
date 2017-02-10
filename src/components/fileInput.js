@@ -1,9 +1,9 @@
-const h = require('inferno-create-element')
-const { connect } = require('inferno-redux')
+const bel = require('bel')
 const file = require('file-component')
-const { loadFileStart, loadFileFinish } = require('../state')
+const connect = require('../utils/connect')
+const { dispatch, loadFileStart, loadFileFinish } = require('../state')
 
-function onChange (event, dispatch) {
+function onChange (event) {
   if (event.target.files.length === 0) {
     return
   }
@@ -19,19 +19,25 @@ function onChange (event, dispatch) {
   })
 }
 
-const enhance = connect(
-  state => ({ loading: state.currentFile.loading }),
-  dispatch => ({ onChange: (event) => onChange(event, dispatch) })
-)
+module.exports = FileInput
 
-module.exports = enhance(FileInput)
+function FileInput () {
+  const loadingIndicator = bel`
+    <span>Loading ...</span>
+  `
 
-function FileInput ({ loading, onChange }) {
-  return h('div', {}, [
-    loading && h('span', {}, 'Loading ...'),
-    h('input', {
-      type: 'file',
-      onChange: onChange
-    })
-  ])
+  let wasLoading = false
+
+  return connect((state, el) => {
+    if (state.currentFile.loading) {
+      el.insertBefore(loadingIndicator, el.firstChild)
+    } else if (wasLoading) {
+      el.removeChild(loadingIndicator)
+    }
+    wasLoading = state.currentFile.loading
+  })(bel`
+    <div>
+      <input type="file" onchange=${onChange} />
+    </div>
+  `)
 }

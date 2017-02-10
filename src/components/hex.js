@@ -1,3 +1,4 @@
+const bel = require('bel')
 const h = require('inferno-create-element')
 const css = require('tagged-css-modules')
 const DataView = require('./dataView')
@@ -29,13 +30,14 @@ for (let i = 0; i <= 0xFF; i++) {
   formatted[i] = formatByte(i)
 }
 
-function Cell ({ byte, selected, onSelect }) {
-  return h('span', {
-    onClick: onSelect,
-    className: [
-      styles.cell,
-      selected && styles.selected,
-      byte === 0 && styles.empty
-    ].filter(Boolean).join(' ')
-  }, formatted[byte])
+function Cell ({ byte, selected }) {
+  const classNames = [
+    styles.cell,
+    selected && styles.selected,
+    byte === 0 && styles.empty
+  ].filter(Boolean).join(' ')
+
+  return bel`
+    <span class=${classNames}>${formatted[byte]}</span>
+  `
 }
