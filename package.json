@@ -15,7 +15,7 @@
     "empty-element": "^1.0.0",
     "file-component": "^0.1.0",
     "is-ascii-control-char-code": "^1.0.0",
-    "mousetrap": "^1.6.0",
+    "mousetrap": "^1.6.1",
     "on-load": "^3.2.0",
     "reduce-reducers": "^0.1.2",
     "redux": "^3.6.0",
