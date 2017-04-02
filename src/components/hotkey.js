@@ -1,50 +1,54 @@
-const h = require('inferno-create-element')
-const Component = require('inferno-component')
-const { connect } = require('inferno-redux')
+const onload = require('on-load')
+const { dispatch, getState } = require('../state')
 const Mousetrap = require('mousetrap')
 
-const enhance = connect(
-  (state) => ({}),
-  (dispatch) => ({ dispatch })
-)
+module.exports = Hotkey
+module.exports.Hotkeys = Hotkeys
 
-class Hotkey extends Component {
-  constructor (props, context) {
-    super(props, context)
-
-    this.store = context.store
-    this.handle = this.handle.bind(this)
-  }
-
-  handle (event, ...args) {
-    const { dispatch, action } = this.props
-
+function Hotkey ({ keys, action }) {
+  function handle (event, ...args) {
     event.preventDefault()
-    dispatch(action(this.store.getState(), event, ...args))
+    dispatch(action(getState(), event, ...args))
   }
 
-  componentDidMount () {
-    Mousetrap.bind(this.props.keys, this.handle)
+  function attach () {
+    Mousetrap.bind(keys, handle)
   }
-  componentWillUnmount () {
-    Mousetrap.unbind(this.props.keys)
+  function detach () {
+    Mousetrap.unbind(keys)
   }
 
-  render () {}
+  function auto (el) {
+    onload(el, attach, detach)
+    return el
+  }
+
+  auto.attach = attach
+  auto.detach = detach
+
+  return auto
 }
 
-module.exports = enhance(Hotkey)
-module.exports.Hotkeys = enhance(Hotkeys)
-
 function Hotkeys (handlers) {
-  const { dispatch } = handlers
+  const hotkeys = Object.keys(handlers).map((keys) => Hotkey({
+    keys,
+    action: handlers[keys]
+  }))
 
-  return h('span', {}, Object.keys(handlers)
-    .filter((keys) => keys !== 'dispatch')
-    .map((keys) => h(Hotkey, {
-      dispatch,
-      keys,
-      action: handlers[keys]
-    }))
-  )
+  function attach () {
+    hotkeys.forEach((k) => k.attach())
+  }
+  function detach () {
+    hotkeys.forEach((k) => k.detach())
+  }
+
+  function auto (el) {
+    onload(el, attach, detach)
+    return el
+  }
+
+  auto.attach = attach
+  auto.detach = detach
+
+  return auto
 }

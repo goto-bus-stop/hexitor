@@ -1,6 +1,7 @@
-const h = require('inferno-create-element')
-const { connect } = require('inferno-redux')
+const empty = require('empty-element')
+const bel = require('bel')
 const css = require('tagged-css-modules')
+const connect = require('../utils/connect')
 const FileInput = require('./fileInput')
 
 const styles = css`
@@ -35,20 +36,41 @@ const styles = css`
   }
 `
 
-const enhance = connect(
-  (state) => ({
-    filename: state.currentFile.filename
-  })
-)
+module.exports = Header
 
-module.exports = enhance(Header)
+function FileTab (filename) {
+  return bel`
+    <div class=${styles.tab}>
+      ${filename}
+    </div>
+  `
+}
 
-function Header ({ filename }) {
-  return h('div', { className: styles.header }, [
-    h('h1', { className: styles.title }, 'Hexitor'),
-    h('div', { className: styles.tabs },
-      filename && h('div', { className: styles.tab }, filename)
-    ),
-    h(FileInput)
-  ])
+function Header () {
+  const tabs = bel`
+    <div class=${styles.tabs} />
+  `
+
+  let lastFilename
+  return connect((state, el) => {
+    const newFilename = state.currentFile.filename
+    if (newFilename === lastFilename) {
+      return
+    }
+    lastFilename = newFilename
+
+    empty(tabs)
+
+    if (newFilename) {
+      tabs.appendChild(FileTab(newFilename))
+    }
+  })(bel`
+    <div class=${styles.header}>
+      <h1 class=${styles.title}>
+        Hexitor
+      </h1>
+      ${tabs}
+      ${FileInput()}
+    </div>
+  `)
 }

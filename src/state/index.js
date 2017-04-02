@@ -1,13 +1,15 @@
-const { combineReducers } = require('redux')
+const { combineReducers, createStore } = require('redux')
 const currentFile = require('./currentFile')
 const cursor = require('./cursor')
 const view = require('./view')
 
-module.exports = exports = combineReducers({
+const reducer = combineReducers({
   currentFile,
   cursor,
   view
 })
+
+module.exports = exports = createStore(reducer)
 
 Object.assign(exports, currentFile)
 Object.assign(exports, cursor)

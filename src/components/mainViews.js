@@ -1,11 +1,14 @@
-const h = require('inferno-create-element')
-const { linkEvent } = require('inferno')
-const { connect } = require('inferno-redux')
+const bel = require('bel')
 const css = require('tagged-css-modules')
+const connect = require('../utils/connect')
 const Gutter = require('./gutter')
 const Hex = require('./hex')
 const Ascii = require('./ascii')
-const { setVisibleArea, reportCellSize } = require('../state')
+const {
+  dispatch,
+  setVisibleArea,
+  reportCellSize
+} = require('../state')
 
 const GUTTER_WIDTH = 100
 const BORDER_WIDTH = 2
@@ -19,63 +22,57 @@ const styles = css`
   }
 
   .gutter {
-    width: ${GUTTER_WIDTH};
+    width: ${GUTTER_WIDTH}px;
     background: #1b1b1b;
-    border-right: 2px solid #000;
+    border-right: ${BORDER_WIDTH}px solid #000;
   }
 
   .hex {}
   .ascii {}
 `
 
-const enhance = connect(
-  (state) => ({
-    hexWidth: state.view.widths.hex,
-    asciiWidth: state.view.widths.ascii
-  }),
-  {
-    setVisibleArea,
-    reportHexCellSize: reportCellSize.bind(null, 'hex'),
-    reportAsciiCellSize: reportCellSize.bind(null, 'ascii')
+module.exports = MainViews
+
+function MainViews () {
+  const report = (type) => (size) => dispatch(reportCellSize(type, size))
+
+  function onUpdate (el) {
+    dispatch(setVisibleArea(
+      el.scrollTop,
+      el.scrollLeft,
+      el.clientHeight,
+      el.clientWidth
+    ))
   }
-)
 
-module.exports = enhance(MainViews)
+  function onScroll (event) {
+    onUpdate(event.target)
+  }
 
-function onUpdate (setVisibleArea, el) {
-  setVisibleArea(
-    el.scrollTop,
-    el.scrollLeft,
-    el.clientHeight,
-    el.clientWidth
-  )
-}
+  const hex = bel`
+    <div class=${styles.hex}>
+      ${Hex({ onCellSize: report('hex') })}
+    </div>
+  `
+  const ascii = bel`
+    <div class=${styles.ascii}>
+      ${Ascii({ onCellSize: report('ascii') })}
+    </div>
+  `
 
-function onScroll (setVisibleArea, event) {
-  onUpdate(setVisibleArea, event.target)
-}
-
-const Wrapper = (props) => h('div', Object.assign({ className: styles.split }, props))
-
-function MainViews ({
-  hexWidth,
-  asciiWidth,
-  setVisibleArea,
-  reportHexCellSize,
-  reportAsciiCellSize
-}) {
-  return h(Wrapper, {
-    onComponentDidMount: onUpdate.bind(null, setVisibleArea),
-    onScroll: linkEvent(setVisibleArea, onScroll)
-  }, [
-    h('div', { className: styles.gutter },
-      h(Gutter)
-    ),
-    h('div', { className: styles.hex, style: { width: hexWidth } },
-      h(Hex, { width: hexWidth, onCellSize: reportHexCellSize })
-    ),
-    h('div', { className: styles.ascii, style: { width: asciiWidth } },
-      h(Ascii, { width: asciiWidth, onCellSize: reportAsciiCellSize })
-    )
-  ])
+  return connect((state) => {
+    const widths = state.view.widths
+    hex.style.width = `${widths.hex}px`
+    ascii.style.width = `${widths.ascii}px`
+  })(bel`
+    <span>
+      <div class=${styles.split} onscroll=${onScroll} onload=${onUpdate}>
+        <div class=${styles.gutter}>
+          ${Gutter()}
+        </div>
+        ${hex}
+        ${ascii}
+      </div>
+    </span>
+  `)
 }

@@ -1,4 +1,4 @@
-const h = require('inferno-create-element')
+const bel = require('bel')
 const css = require('tagged-css-modules')
 const isControlCharacter = require('is-ascii-control-char-code')
 const DataView = require('./dataView')
@@ -36,14 +36,15 @@ function formatByte (byte, isCtrl) {
   return isCtrl ? '?' : String.fromCharCode(byte)
 }
 
-function Cell ({ byte, selected, onSelect }) {
+function Cell ({ byte, selected }) {
   const isCtrl = isControlCharacter(byte) || byte > 0x7F
-  return h('span', {
-    onClick: onSelect,
-    className: [
-      styles.cell,
-      selected && styles.selected,
-      isCtrl && styles.control
-    ].filter(Boolean).join(' ')
-  }, formatByte(byte, isCtrl))
+  const classNames = [
+    styles.cell,
+    selected && styles.selected,
+    isCtrl && styles.control
+  ].filter(Boolean).join(' ')
+
+  return bel`
+    <span class=${classNames}>${formatByte(byte, isCtrl)}</span>
+  `
 }
