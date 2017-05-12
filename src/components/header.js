@@ -1,5 +1,5 @@
 const empty = require('empty-element')
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const connect = require('../utils/connect')
 const FileInput = require('./fileInput')
@@ -39,7 +39,7 @@ const styles = css`
 module.exports = Header
 
 function FileTab (filename) {
-  return bel`
+  return html`
     <div class=${styles.tab}>
       ${filename}
     </div>
@@ -47,7 +47,7 @@ function FileTab (filename) {
 }
 
 function Header () {
-  const tabs = bel`
+  const tabs = html`
     <div class=${styles.tabs} />
   `
 
@@ -64,7 +64,7 @@ function Header () {
     if (newFilename) {
       tabs.appendChild(FileTab(newFilename))
     }
-  })(bel`
+  })(html`
     <div class=${styles.header}>
       <h1 class=${styles.title}>
         Hexitor

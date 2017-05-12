@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const DataView = require('./dataView')
 
@@ -36,7 +36,7 @@ function Cell ({ byte, selected }) {
     byte === 0 && styles.empty
   ].filter(Boolean).join(' ')
 
-  return bel`
+  return html`
     <span class=${classNames}>${formatted[byte]}</span>
   `
 }

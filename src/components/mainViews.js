@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const connect = require('../utils/connect')
 const Gutter = require('./gutter')
@@ -49,12 +49,12 @@ function MainViews () {
     onUpdate(event.target)
   }
 
-  const hex = bel`
+  const hex = html`
     <div class=${styles.hex}>
       ${Hex({ onCellSize: report('hex') })}
     </div>
   `
-  const ascii = bel`
+  const ascii = html`
     <div class=${styles.ascii}>
       ${Ascii({ onCellSize: report('ascii') })}
     </div>
@@ -64,7 +64,7 @@ function MainViews () {
     const widths = state.view.widths
     hex.style.width = `${widths.hex}px`
     ascii.style.width = `${widths.ascii}px`
-  })(bel`
+  })(html`
     <span>
       <div class=${styles.split} onscroll=${onScroll} onload=${onUpdate}>
         <div class=${styles.gutter}>

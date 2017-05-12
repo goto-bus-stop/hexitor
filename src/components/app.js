@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const Header = require('./header')
 const Main = require('./mainViews')
@@ -41,7 +41,7 @@ module.exports = function App () {
     down: (state) => moveCursor((pos) => pos + state.view.bytesPerLine)
   })
 
-  return hotkeys(bel`
+  return hotkeys(html`
     <div>
       ${Header()}
       <div class=${styles.main}>

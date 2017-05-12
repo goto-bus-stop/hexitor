@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const file = require('file-component')
 const connect = require('../utils/connect')
 const { dispatch, loadFileStart, loadFileFinish } = require('../state')
@@ -22,7 +22,7 @@ function onChange (event) {
 module.exports = FileInput
 
 function FileInput () {
-  const loadingIndicator = bel`
+  const loadingIndicator = html`
     <span>Loading ...</span>
   `
 
@@ -35,7 +35,7 @@ function FileInput () {
       el.removeChild(loadingIndicator)
     }
     wasLoading = state.currentFile.loading
-  })(bel`
+  })(html`
     <div>
       <input type="file" onchange=${onChange} />
     </div>

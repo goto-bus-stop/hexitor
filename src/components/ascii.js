@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const isControlCharacter = require('is-ascii-control-char-code')
 const DataView = require('./dataView')
@@ -44,7 +44,7 @@ function Cell ({ byte, selected }) {
     isCtrl && styles.control
   ].filter(Boolean).join(' ')
 
-  return bel`
+  return html`
     <span class=${classNames}>${formatByte(byte, isCtrl)}</span>
   `
 }

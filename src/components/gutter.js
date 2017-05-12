@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const empty = require('empty-element')
 const css = require('tagged-css-modules')
 const { selectLineHeight, selectTotalHeight, selectTotalLines } = require('../state')
@@ -36,7 +36,7 @@ function Byte ({ byte, selected }) {
     styles.lineNumber,
     selected && styles.selected
   ].filter(Boolean).join(' ')
-  return bel`
+  return html`
     <div class=${classNames}>
       <span class=${styles.padding}>${padding}</span>${hex}
     </div>
@@ -44,7 +44,7 @@ function Byte ({ byte, selected }) {
 }
 
 function Gutter () {
-  const markersWrapper = bel`<div />`
+  const markersWrapper = html`<div />`
 
   function updateMarkers ({
     firstVisibleLine,
@@ -87,7 +87,7 @@ function Gutter () {
       totalLines,
       cursor
     })
-  })(bel`
+  })(html`
     <div class=${styles.gutter}>
       ${markersWrapper}
     </div>

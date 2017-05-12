@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const {
   dispatch,
@@ -28,8 +28,8 @@ function replaceElement (oldElement, newElement) {
 }
 
 function DataView ({ renderCell, onCellSize }) {
-  const visibleWrapper = bel`<div />`
-  const heightWrapper = bel`
+  const visibleWrapper = html`<div />`
+  const heightWrapper = html`
     <div>${visibleWrapper}</div>
   `
 
@@ -71,7 +71,7 @@ function DataView ({ renderCell, onCellSize }) {
     bytesPerLine,
     lineStart
   }) {
-    const line = bel`<span />`
+    const line = html`<span />`
     for (let b = 0; b < bytesPerLine; b += 1) {
       const byteIndex = lineStart + b
       line.appendChild(getCell({
@@ -211,7 +211,7 @@ function DataView ({ renderCell, onCellSize }) {
         bytesPerLine
       })
     }
-  })(bel`
+  })(html`
     <span>
       <div class=${styles.field} onload=${onload} onclick=${onclick}>
         ${heightWrapper}

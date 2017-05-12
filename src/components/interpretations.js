@@ -1,4 +1,4 @@
-const bel = require('bel')
+const html = require('bel')
 const css = require('tagged-css-modules')
 const connect = require('../utils/connect')
 
@@ -44,7 +44,7 @@ function onInputClick (event) {
 }
 
 const createValueComponent = (label, reader) => () => {
-  const input = bel`
+  const input = html`
     <input
       class=${styles.input}
       readonly
@@ -56,7 +56,7 @@ const createValueComponent = (label, reader) => () => {
     input.value = buffer ? reader(buffer, cursor) : ''
   }
 
-  const element = bel`
+  const element = html`
     <div class=${styles.valueComponent}>
       <label class=${styles.label}>${label}</label>
       ${input}
@@ -88,7 +88,7 @@ function Interpretations () {
     [AsHexadecimal(), AsOctal(), AsBinary(), AsAscii(), AsUtf8()]
   ]
 
-  const columns = representations.map((col) => bel`
+  const columns = representations.map((col) => html`
     <div>
       ${col.map((component) => component.render())}
     </div>
@@ -105,7 +105,7 @@ function Interpretations () {
         repr.update(props)
       })
     })
-  })(bel`
+  })(html`
     <div class=${styles.interpretations}>
       ${columns}
     </div>
