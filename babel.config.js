@@ -1,9 +1,9 @@
 module.exports = {
-  'presets': [
+  presets: [
     '@babel/preset-env'
   ],
-  'plugins': [
-    "tagged-css-modules/babel",
+  plugins: [
+    'tagged-css-modules/babel',
     'nanohtml'
   ]
 }

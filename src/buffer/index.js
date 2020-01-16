@@ -21,9 +21,9 @@ class HexBuffer extends Buffer {
   }
 
   view (start, end) {
-    if (!this.viewsCache.hasOwnProperty(start)) {
+    if (!has(this.viewsCache, start)) {
       this.viewsCache[start] = {}
-    } else if (this.viewsCache[start].hasOwnProperty(end)) {
+    } else if (has(this.viewsCache[start], end)) {
       return this.viewsCache[start][end]
     }
 
@@ -41,4 +41,8 @@ HexBuffer.from = (arrayBuffer) => {
   Object.setPrototypeOf(base, HexBuffer.prototype)
   base.initHexBuffer()
   return base
+}
+
+function has (obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop)
 }
