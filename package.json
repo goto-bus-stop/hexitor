@@ -23,7 +23,6 @@
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
-    "babel-plugin-yo-yoify": "^0.6.0",
     "babelify": "^10.0.0",
     "browserify": "^16.5.0",
     "budo": "^11.6.3",
