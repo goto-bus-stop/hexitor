@@ -8,16 +8,16 @@
     "lint": "standard src/**/*.js"
   },
   "dependencies": {
-    "deep-extend": "^0.5.0",
-    "ecstatic": "^2.1.0",
+    "deep-extend": "^0.6.0",
+    "ecstatic": "^4.1.2",
     "empty-element": "^1.0.0",
     "file-component": "^0.1.0",
-    "is-ascii-control-char-code": "^1.0.0",
+    "is-ascii-control-char-code": "^2.0.0",
     "mousetrap": "^1.6.0",
     "nanohtml": "^1.9.0",
-    "on-load": "^3.2.0",
-    "reduce-reducers": "^0.1.2",
-    "redux": "^3.6.0",
+    "on-load": "^4.0.0",
+    "reduce-reducers": "^1.0.0",
+    "redux": "^4.0.0",
     "tagged-css-modules": "^0.1.1"
   },
   "devDependencies": {
