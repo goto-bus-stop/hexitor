@@ -1,4 +1,4 @@
-const html = require('bel')
+const html = require('nanohtml')
 const css = require('tagged-css-modules')
 const connect = require('../utils/connect')
 const Gutter = require('./gutter')

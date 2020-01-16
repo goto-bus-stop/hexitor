@@ -1,4 +1,4 @@
-const html = require('bel')
+const html = require('nanohtml')
 const css = require('tagged-css-modules')
 const Header = require('./header')
 const Main = require('./mainViews')

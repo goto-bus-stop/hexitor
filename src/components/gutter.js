@@ -1,4 +1,4 @@
-const html = require('bel')
+const html = require('nanohtml')
 const empty = require('empty-element')
 const css = require('tagged-css-modules')
 const { selectLineHeight, selectTotalHeight, selectTotalLines } = require('../state')

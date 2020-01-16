@@ -1,4 +1,4 @@
-const html = require('bel')
+const html = require('nanohtml')
 const file = require('file-component')
 const connect = require('../utils/connect')
 const { dispatch, loadFileStart, loadFileFinish } = require('../state')

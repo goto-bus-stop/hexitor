@@ -1,5 +1,5 @@
 const empty = require('empty-element')
-const html = require('bel')
+const html = require('nanohtml')
 const css = require('tagged-css-modules')
 const connect = require('../utils/connect')
 const FileInput = require('./fileInput')
