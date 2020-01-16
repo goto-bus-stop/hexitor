@@ -3,7 +3,7 @@ module.exports = {
     '@babel/preset-env'
   ],
   plugins: [
-    'tagged-css-modules/babel',
-    'nanohtml'
+    'module:tagged-css-modules/babel',
+    'module:nanohtml'
   ]
 }
