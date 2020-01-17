@@ -1,3 +1,4 @@
+const cx = require('clsx')
 const html = require('nanohtml')
 const empty = require('empty-element')
 const css = require('tagged-css-modules')
@@ -32,10 +33,10 @@ function Byte ({ byte, selected }) {
   const hex = byte.toString(16).toUpperCase()
   const padding = '0'.repeat(8 - hex.length)
 
-  const classNames = [
+  const classNames = cx([
     styles.lineNumber,
     selected && styles.selected
-  ].filter(Boolean).join(' ')
+  ])
   return html`
     <div class=${classNames}>
       <span class=${styles.padding}>${padding}</span>${hex}

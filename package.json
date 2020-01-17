@@ -8,6 +8,7 @@
     "lint": "standard src/**/*.js"
   },
   "dependencies": {
+    "clsx": "^1.0.4",
     "deep-extend": "^0.6.0",
     "ecstatic": "^4.1.2",
     "empty-element": "^1.0.0",

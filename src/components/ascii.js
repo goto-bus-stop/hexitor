@@ -1,3 +1,4 @@
+const cx = require('clsx')
 const html = require('nanohtml')
 const css = require('tagged-css-modules')
 const isControlCharacter = require('is-ascii-control-char-code')
@@ -38,11 +39,11 @@ function formatByte (byte, isCtrl) {
 
 function Cell ({ byte, selected }) {
   const isCtrl = isControlCharacter(byte) || byte > 0x7F
-  const classNames = [
+  const classNames = cx([
     styles.cell,
     selected && styles.selected,
     isCtrl && styles.control
-  ].filter(Boolean).join(' ')
+  ])
 
   return html`
     <span class=${classNames}>${formatByte(byte, isCtrl)}</span>

@@ -1,3 +1,4 @@
+const cx = require('clsx')
 const html = require('nanohtml')
 const css = require('tagged-css-modules')
 const DataView = require('./dataView')
@@ -30,11 +31,11 @@ for (let i = 0; i <= 0xFF; i++) {
 }
 
 function Cell ({ byte, selected }) {
-  const classNames = [
+  const classNames = cx([
     styles.cell,
     selected && styles.selected,
     byte === 0 && styles.empty
-  ].filter(Boolean).join(' ')
+  ])
 
   return html`
     <span class=${classNames}>${formatted[byte]}</span>
